@@ -5,6 +5,8 @@
   --muted:#6b6b6b;
   --danger:#e74c3c;
   --glass: rgba(255,255,255,0.7);
+  --plot-bg:#8b7355;
+  --plot-empty:#c4a57b;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
@@ -28,12 +30,14 @@ header{
   gap:12px;
 }
 
-h1{margin:0;font-size:1.4rem}
-#resources{display:flex;align-items:center;gap:8px}
+h1{margin:0;font-size:1.5rem}
+h2{margin:0 0 12px 0;font-size:1.2rem}
+h3{margin:0 0 8px 0;font-size:1rem}
+#resources{display:flex;align-items:center;gap:8px;font-size:1.1rem}
 
 main{
   display:grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: 280px 1fr;
   gap:16px;
   align-items:start;
 }
@@ -41,42 +45,162 @@ main{
 section{
   background:var(--card);
   border-radius:10px;
-  padding:12px;
+  padding:16px;
   box-shadow:0 4px 12px rgba(0,0,0,0.06);
 }
 
-.cards{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.card{
-  background:var(--glass);
-  border-radius:8px;
+.hint{
+  font-size:0.9rem;
+  color:var(--muted);
+  margin:0 0 12px 0;
   padding:8px;
-  min-width:120px;
-  display:flex;
-  gap:8px;
-  align-items:center;
+  background:#fff9e6;
+  border-radius:6px;
+  border-left:3px solid #ffcc00;
 }
 
-.placeholder{padding:20px;text-align:center;color:var(--muted)}
+/* Shop Styles */
+#shop{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
 
-.sprite{
-  font-size:56px;
-  width:90px;
-  height:90px;
+.shop-items{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.shop-item{
+  background:var(--glass);
+  border:2px solid transparent;
+  border-radius:8px;
+  padding:10px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+
+.shop-item:hover{
+  background:#f0fff0;
+  border-color:var(--accent);
+  transform:translateY(-2px);
+}
+
+.shop-item.selected{
+  background:#e8f5e9;
+  border-color:var(--accent);
+  box-shadow:0 2px 8px rgba(106,176,76,0.3);
+}
+
+.shop-emoji{
+  font-size:32px;
+  width:50px;
+  height:50px;
   display:flex;
   align-items:center;
   justify-content:center;
-  border-radius:8px;
-  background:linear-gradient(180deg, #fff, #f0fff0);
-  box-shadow:0 2px 6px rgba(0,0,0,0.04);
 }
 
-.info{flex:1}
-.actions{display:flex;flex-direction:column;gap:6px;margin-left:8px}
+.shop-info{
+  flex:1;
+  text-align:left;
+}
+
+.shop-cost{
+  font-size:0.85rem;
+  color:#666;
+  margin-top:2px;
+}
+
+/* Garden Grid Styles */
+#gardenGrid{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:12px;
+  padding:4px;
+}
+
+.plot{
+  aspect-ratio:1;
+  background:var(--plot-bg);
+  border-radius:12px;
+  border:3px solid #6d5c47;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:all 0.2s;
+  position:relative;
+  padding:8px;
+}
+
+.plot:hover{
+  transform:scale(1.05);
+  box-shadow:0 4px 12px rgba(0,0,0,0.2);
+}
+
+.plot.empty{
+  background:var(--plot-empty);
+}
+
+.plot.empty:hover{
+  background:#d4b58b;
+}
+
+.plot-empty{
+  font-size:40px;
+  opacity:0.5;
+}
+
+.plot-pet{
+  font-size:50px;
+  margin-bottom:4px;
+}
+
+.plot-stage{
+  font-size:0.75rem;
+  font-weight:600;
+  color:#fff;
+  background:rgba(0,0,0,0.3);
+  padding:2px 6px;
+  border-radius:4px;
+  margin-bottom:4px;
+}
+
+.plot-progress{
+  width:100%;
+  height:6px;
+  background:rgba(255,255,255,0.3);
+  border-radius:3px;
+  overflow:hidden;
+}
+
+.plot-progress-bar{
+  height:100%;
+  background:linear-gradient(90deg, #ffcc00, #6ab04c);
+  transition:width 0.3s;
+}
+
+.plot.harvestable{
+  box-shadow:0 0 20px rgba(106,176,76,0.8);
+  border-color:#6ab04c;
+  border-width:4px;
+}
+
+.plot.harvestable:hover{
+  box-shadow:0 0 30px rgba(106,176,76,1);
+  transform:scale(1.1);
+}
+
+/* Log Section */
+#logSection{grid-column:1 / -1}
+.log{list-style:none;margin:0;padding:0;max-height:150px;overflow:auto}
+.log li{padding:6px;border-bottom:1px dashed #eee;font-size:0.9rem;color:#333}
 
 button{
   background:var(--accent);
@@ -88,15 +212,15 @@ button{
   font-weight:600;
 }
 button:hover{filter:brightness(0.98)}
-button.danger{background:var(--danger)}
-
-#logSection{grid-column:1 / -1}
-.log{list-style:none;margin:0;padding:0;max-height:160px;overflow:auto}
-.log li{padding:6px;border-bottom:1px dashed #eee;font-size:0.95rem;color:#333}
 
 .hidden{display:none}
 
 /* responsive */
 @media (max-width:860px){
-  main{grid-template-columns:1fr; }
+  main{grid-template-columns:1fr;}
+  #gardenGrid{grid-template-columns:repeat(3, 1fr);}
+}
+
+@media (max-width:500px){
+  #gardenGrid{grid-template-columns:repeat(2, 1fr);}
 }
