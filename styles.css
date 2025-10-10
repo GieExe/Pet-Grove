@@ -187,13 +187,14 @@ section{
 }
 
 .plot.harvestable{
-  animation:pulse 1.5s infinite;
-  box-shadow:0 0 20px rgba(106,176,76,0.6);
+  box-shadow:0 0 20px rgba(106,176,76,0.8);
+  border-color:#6ab04c;
+  border-width:4px;
 }
 
-@keyframes pulse {
-  0%, 100% { transform:scale(1); }
-  50% { transform:scale(1.08); }
+.plot.harvestable:hover{
+  box-shadow:0 0 30px rgba(106,176,76,1);
+  transform:scale(1.1);
 }
 
 /* Log Section */

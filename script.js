@@ -141,11 +141,13 @@ function renderGarden(){
       // Click to harvest if fully grown
       if(plot.pet.stage === 3 && plot.pet.growth >= 100){
         plotEl.classList.add('harvestable');
+        plotEl.title = `Click to harvest! Earn ${plot.pet.harvestValue} coins 💰`;
         plotEl.onclick = () => harvestPlot(idx);
       }
     } else {
       plotEl.classList.add('empty');
       plotEl.innerHTML = '<div class="plot-empty">🌱</div>';
+      plotEl.title = 'Click to plant a pet';
       
       // Click to plant
       plotEl.onclick = () => plantPet(idx);
@@ -237,18 +239,23 @@ function tick(deltaSec){
 }
 
 let last = Date.now();
+let lastUIUpdate = Date.now();
 function mainLoop(){
   const now = Date.now();
   const deltaMs = now - last;
   const deltaSec = deltaMs / 1000;
   if(deltaMs >= TICK_INTERVAL){
-    const hadGrowth = tick(deltaSec);
+    tick(deltaSec);
     save();
-    if(hadGrowth){
-      updateUI();
-    }
     last = now;
   }
+  
+  // Update UI every 2 seconds for smooth progress bars
+  if(now - lastUIUpdate >= 2000){
+    updateUI();
+    lastUIUpdate = now;
+  }
+  
   requestAnimationFrame(mainLoop);
 }
 
