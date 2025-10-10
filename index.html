@@ -3,49 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Pet Grove</title>
+  <title>Pet Grove Garden</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header>
-    <h1>Pet Grove 🌱→🐶🐱🐼</h1>
+    <h1>🌱 Pet Grove Garden 🐾</h1>
     <div id="resources">
-      <span>Food: <strong id="foodCount">0</strong></span>
-      <button id="gatherFoodBtn">Gather Food</button>
+      <span>Coins: <strong id="coinCount">0</strong> 💰</span>
     </div>
   </header>
 
   <main>
-    <section id="adopt">
-      <h2>Adopt a Pet</h2>
-      <div id="petOptions" class="cards">
-        <!-- JS inserts pet options -->
+    <section id="shopSection">
+      <div id="shop">
+        <!-- JS inserts shop items -->
       </div>
     </section>
 
-    <section id="garden">
-      <h2>Your Pet</h2>
-      <div id="petArea">
-        <div id="noPet" class="placeholder">
-          You don't have a pet yet — adopt one above!
-        </div>
-        <div id="petCard" class="card hidden">
-          <div id="petSprite" class="sprite">🐶</div>
-          <div class="info">
-            <h3 id="petName">Buddy</h3>
-            <p>Stage: <span id="petStage">Baby</span></p>
-            <p>Level: <span id="petLevel">1</span></p>
-            <p>XP: <progress id="xpBar" max="100" value="0"></progress></p>
-            <p>Hunger: <span id="hunger">50</span></p>
-            <p>Happiness: <span id="happiness">50</span></p>
-          </div>
-          <div class="actions">
-            <button id="feedBtn">Feed (-1 Food)</button>
-            <button id="playBtn">Play</button>
-            <button id="renameBtn">Rename</button>
-            <button id="releaseBtn" class="danger">Release Pet</button>
-          </div>
-        </div>
+    <section id="gardenSection">
+      <h2>Your Pet Garden</h2>
+      <p class="hint">💡 Select a pet from the shop, then click an empty plot to plant it!</p>
+      <div id="gardenGrid">
+        <!-- JS inserts garden plots -->
       </div>
     </section>
 
@@ -56,7 +36,7 @@
   </main>
 
   <footer>
-    <small>Pet Grove — local progress only. Refresh to continue where you left off.</small>
+    <small>Pet Grove — Plant, grow, and harvest pets for coins! Progress saves automatically.</small>
   </footer>
 
   <script src="script.js"></script>
