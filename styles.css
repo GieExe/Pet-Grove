@@ -112,10 +112,6 @@ section{
   border-color:var(--primary);
 }
 
-.shop-item:hover *{
-  pointer-events:none;
-}
-
 .shop-emoji{
   font-size:28px;
   width:40px;
@@ -234,11 +230,24 @@ section{
 .defender{
   font-size:32px;
   animation:pulse 2s infinite;
+  transition:transform 0.1s;
 }
 
 @keyframes pulse{
   0%, 100%{transform:scale(1)}
   50%{transform:scale(1.1)}
+}
+
+.defender.attacking{
+  animation:attack 0.3s ease-out;
+}
+
+@keyframes attack{
+  0%{transform:scale(1) rotate(0deg)}
+  25%{transform:scale(1.3) rotate(-10deg)}
+  50%{transform:scale(1.4) rotate(10deg)}
+  75%{transform:scale(1.3) rotate(-5deg)}
+  100%{transform:scale(1) rotate(0deg)}
 }
 
 .enemy{
@@ -298,10 +307,6 @@ section{
   background:rgba(255,255,255,0.1);
   border-color:var(--primary);
   transform:translateY(-2px);
-}
-
-.inventory-item:hover *{
-  pointer-events:none;
 }
 
 .inventory-item.selected{
