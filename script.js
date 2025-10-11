@@ -33,57 +33,16 @@ const PET_DEFENDERS = [
     rarity: 'common',
     description: 'Fast attacker'
   },
-  { 
-    id: 'panda', 
-    emoji: '🐼', 
-    name: 'Kung Fu Panda', 
-    cost: 100, 
-    damage: 25, 
-    range: 1.5, 
-    attackSpeed: 1.5,
-    rarity: 'rare',
-    description: 'Strong melee fighter'
-  },
-  { 
-    id: 'dragon', 
-    emoji: '🐲', 
-    name: 'Fire Dragon', 
-    cost: 150, 
-    damage: 40, 
-    range: 3, 
-    attackSpeed: 2.0,
-    rarity: 'epic',
-    description: 'Powerful ranged attacker'
-  },
-  { 
-    id: 'lion', 
-    emoji: '🦁', 
-    name: 'Lion King', 
-    cost: 200, 
-    damage: 50, 
-    range: 2, 
-    attackSpeed: 1.2,
-    rarity: 'legendary',
-    description: 'Ultimate damage dealer'
-  },
-  { 
-    id: 'owl', 
-    emoji: '🦉', 
-    name: 'Wise Owl', 
-    cost: 80, 
-    damage: 12, 
-    range: 3.5, 
-    attackSpeed: 1.5,
-    rarity: 'rare',
-    description: 'Long range sniper'
-  }
+  { id: 'panda', emoji: '🐼', name: 'Kung Fu Panda', cost: 120, damage: 25, range: 1.5, attackSpeed: 1.5, rarity:'rare', description:'Strong melee fighter' },
+  { id: 'dragon', emoji: '🐲', name: 'Fire Dragon', cost: 300, damage: 40, range: 3.0, attackSpeed: 2.0, rarity:'epic', description:'Powerful ranged attacker' },
+  { id: 'lion', emoji: '🦁', name: 'Lion King', cost: 500, damage: 50, range: 2.0, attackSpeed: 1.2, rarity:'legendary', description:'Ultimate damage dealer' },
+  { id: 'owl', emoji: '🦉', name: 'Wise Owl', cost: 150, damage: 12, range: 3.5, attackSpeed: 1.5, rarity:'rare', description:'Long range sniper' }
 ];
 
-// Enemy types
 const ENEMY_TYPES = [
-  { id: 'slime', emoji: '👾', name: 'Slime', hp: 50, speed: 1, reward: 10, gems: 1 },
-  { id: 'goblin', emoji: '👹', name: 'Goblin', hp: 80, speed: 1.2, reward: 15, gems: 2 },
-  { id: 'orc', emoji: '👺', name: 'Orc', hp: 150, speed: 0.8, reward: 25, gems: 3 },
+  { id: 'slime', emoji: '👾', name: 'Slime', hp: 50, speed: 1.0, reward: 10, gems: 0 },
+  { id: 'goblin', emoji: '👹', name: 'Goblin', hp: 80, speed: 1.2, reward: 15, gems: 0 },
+  { id: 'orc', emoji: '👺', name: 'Orc', hp: 150, speed: 0.8, reward: 30, gems: 1 },
   { id: 'demon', emoji: '😈', name: 'Demon', hp: 300, speed: 1.5, reward: 50, gems: 5 }
 ];
 
@@ -140,6 +99,9 @@ const PATH = [
   { row: 3, col: 6 },
   { row: 3, col: 7 }
 ];
+
+// Persistent cell elements so we don't recreate them every frame
+const cellElements = []; // populated by createBattleGrid()
 
 // Initialize battle grid
 function initCells(){
@@ -381,41 +343,181 @@ function completeWave(){
 
 /* --- Defender/Tower System --- */
 function updateDefenders(deltaTime){
-  state.defenders.forEach(defender => {
-    defender.attackCooldown = Math.max(0, defender.attackCooldown - deltaTime);
+  // Simple defender targeting & attack logic
+  state.defenders.forEach(def => {
+    def.attackCooldown -= deltaTime;
+    if(def.attackCooldown > 0) return;
     
-    if(defender.attackCooldown <= 0){
-      // Find target in range
-      const defPos = getCellCenter(defender.row, defender.col);
-      let target = null;
-      let minDist = Infinity;
-      
-      state.enemies.forEach(enemy => {
-        if(enemy.spawnDelay > 0) return;
-        const enemyPos = getCellCenter(enemy.position.row, enemy.position.col);
-        const dist = distance(defPos.x, defPos.y, enemyPos.x, enemyPos.y);
-        
-        if(dist <= defender.range && dist < minDist){
-          minDist = dist;
-          target = enemy;
-        }
-      });
-      
-      if(target){
-        // Attack target
-        target.hp -= defender.damage;
-        defender.attackCooldown = defender.attackSpeed;
-        
-        if(target.hp <= 0){
-          state.coins += target.reward;
-          state.gems += target.gems;
-          log(`${defender.name} defeated ${target.name}!`);
-        }
+    // find target in range
+    const center = getCellCenter(def.row, def.col);
+    let target = null;
+    for(const e of state.enemies){
+      if(e.spawnDelay > 0) continue;
+      const enemyCenter = { x: e.position.col + 0.5, y: e.position.row + 0.5 };
+      if(distance(center.x, center.y, enemyCenter.x, enemyCenter.y) <= def.range){
+        target = e;
+        break;
       }
+    }
+    
+    if(target){
+      // instant damage for simplicity
+      target.hp -= def.damage;
+      if(target.hp <= 0){
+        log(`💥 ${def.name} defeated ${target.name} (+${target.reward} coins)`);
+        state.coins += (target.reward || 0);
+        state.gems += (target.gems || 0);
+      }
+      def.attackCooldown = def.attackSpeed;
     }
   });
 }
 
+/* --- UI Rendering (persistent grid) --- */
+
+// Build the grid once and attach stable handlers
+function createBattleGrid() {
+  battleGridEl.innerHTML = '';
+  cellElements.length = 0;
+
+  state.cells.forEach((cell, idx) => {
+    const cellEl = document.createElement('div');
+    cellEl.classList.add('cell');
+    if (cell.isPath) cellEl.classList.add('path');
+    else {
+      cellEl.classList.add('placeable');
+      // stable event listener
+      cellEl.addEventListener('click', () => placeDefender(idx));
+    }
+    battleGridEl.appendChild(cellEl);
+    cellElements[idx] = cellEl;
+  });
+
+  // create container for enemies so they don't replace grid nodes
+  const enemiesContainer = document.createElement('div');
+  enemiesContainer.id = 'enemiesContainer';
+  enemiesContainer.style.position = 'absolute';
+  enemiesContainer.style.left = '0';
+  enemiesContainer.style.top = '0';
+  enemiesContainer.style.width = '100%';
+  enemiesContainer.style.height = '100%';
+  enemiesContainer.style.pointerEvents = 'none'; // don't block clicks
+  battleGridEl.appendChild(enemiesContainer);
+}
+
+function updateBattleGrid() {
+  // update classes / innerHTML without recreating nodes
+  state.cells.forEach((cell, idx) => {
+    const el = cellElements[idx];
+    if (!el) return;
+    // reset base class
+    el.className = 'cell';
+    if (cell.isPath) el.classList.add('path');
+    if (cell.defender) {
+      el.classList.add('has-defender');
+      el.innerHTML = `<div class="defender">${cell.defender.emoji}</div>`;
+    } else {
+      el.innerHTML = '';
+      if (!cell.isPath) el.classList.add('placeable');
+    }
+  });
+}
+
+function renderEnemies() {
+  const enemiesContainer = document.getElementById('enemiesContainer');
+  if (!enemiesContainer) return;
+  enemiesContainer.innerHTML = '';
+
+  state.enemies.forEach(enemy => {
+    if (enemy.spawnDelay > 0) return;
+    const enemyEl = document.createElement('div');
+    enemyEl.className = 'enemy';
+    enemyEl.style.left = `${enemy.position.col * (100 / GRID_COLS)}%`;
+    enemyEl.style.top = `${enemy.position.row * (100 / GRID_ROWS)}%`;
+    enemyEl.innerHTML = `
+      <div class="enemy-emoji">${enemy.emoji}</div>
+      <div class="enemy-hp">
+        <div class="enemy-hp-bar" style="width:${(enemy.hp / enemy.maxHp) * 100}%"></div>
+      </div>
+    `;
+    enemiesContainer.appendChild(enemyEl);
+  });
+}
+
+/* --- Shop/Inventory Rendering --- */
+function renderShop(){
+  shopEl.innerHTML = '';
+  PET_DEFENDERS.slice(0, 4).forEach(pet => {
+    const div = document.createElement('div');
+    div.className = `shop-item ${pet.rarity}`;
+    div.innerHTML = `
+      <div class="shop-emoji">${pet.emoji}</div>
+      <div class="shop-info">
+        <strong>${pet.name}</strong>
+        <div class="shop-rarity">${pet.rarity}</div>
+      </div>
+    `;
+    div.title = `${pet.description}\nDamage: ${pet.damage}, Range: ${pet.range}`;
+    shopEl.appendChild(div);
+  });
+}
+
+function renderInventory(){
+  inventoryEl.innerHTML = '';
+  
+  if(state.ownedPets.length === 0){
+    inventoryEl.innerHTML = '<p class="hint">No pets! Use gacha to get more.</p>';
+    return;
+  }
+  
+  state.ownedPets.forEach(pet => {
+    const div = document.createElement('div');
+    div.className = `inventory-item ${pet.rarity}`;
+    if(state.selectedDefender && state.selectedDefender.uniqueId === pet.uniqueId){
+      div.classList.add('selected');
+    }
+    div.innerHTML = `
+      <div class="inv-emoji">${pet.emoji}</div>
+      <div class="inv-name">${pet.name}</div>
+    `;
+    div.title = `${pet.description}\nDamage: ${pet.damage}, Range: ${pet.range}\nClick to select`;
+    // stable event listener; recreating inventory is OK on selection changes,
+    // but we use addEventListener to avoid accidental overwrite if desired
+    div.addEventListener('click', () => {
+      state.selectedDefender = pet;
+      updateUI();
+    });
+    inventoryEl.appendChild(div);
+  });
+}
+
+function updateUI(){
+  coinsEl.textContent = Math.floor(state.coins);
+  gemsEl.textContent = Math.floor(state.gems);
+  livesEl.textContent = state.lives;
+  waveNumberEl.textContent = state.wave;
+  renderShop();
+  renderInventory();
+  updateBattleGrid();
+  renderEnemies();
+}
+
+function gameOver(){
+  state.isWaveActive = false;
+  alert(`Game Over! You survived ${state.wave - 1} waves!\n\nStarting fresh...`);
+  
+  // Reset game
+  state.lives = STARTING_LIVES;
+  state.wave = 1;
+  state.enemies = [];
+  state.defenders = [];
+  state.cells.forEach(cell => cell.defender = null);
+  
+  save();
+  updateUI();
+}
+
+/* --- Place defender (unchanged logic) --- */
 function placeDefender(cellIdx){
   const cell = state.cells[cellIdx];
   
@@ -453,128 +555,10 @@ function placeDefender(cellIdx){
   updateUI();
 }
 
-/* --- UI Rendering --- */
-function renderShop(){
-  shopEl.innerHTML = '';
-  PET_DEFENDERS.slice(0, 4).forEach(pet => {
-    const div = document.createElement('div');
-    div.className = `shop-item ${pet.rarity}`;
-    div.innerHTML = `
-      <div class="shop-emoji">${pet.emoji}</div>
-      <div class="shop-info">
-        <strong>${pet.name}</strong>
-        <div class="shop-rarity">${pet.rarity}</div>
-      </div>
-    `;
-    div.title = `${pet.description}\nDamage: ${pet.damage}, Range: ${pet.range}`;
-    shopEl.appendChild(div);
-  });
-}
-
-function renderInventory(){
-  inventoryEl.innerHTML = '';
-  
-  if(state.ownedPets.length === 0){
-    inventoryEl.innerHTML = '<p class="hint">No pets! Use gacha to get more.</p>';
-    return;
-  }
-  
-  state.ownedPets.forEach(pet => {
-    const div = document.createElement('div');
-    div.className = `inventory-item ${pet.rarity}`;
-    if(state.selectedDefender && state.selectedDefender.uniqueId === pet.uniqueId){
-      div.classList.add('selected');
-    }
-    div.innerHTML = `
-      <div class="inv-emoji">${pet.emoji}</div>
-      <div class="inv-name">${pet.name}</div>
-    `;
-    div.title = `${pet.description}\nDamage: ${pet.damage}, Range: ${pet.range}\nClick to select`;
-    div.onclick = () => {
-      state.selectedDefender = pet;
-      updateUI();
-    };
-    inventoryEl.appendChild(div);
-  });
-}
-
-function renderBattleGrid(){
-  battleGridEl.innerHTML = '';
-  
-  state.cells.forEach((cell, idx) => {
-    const cellEl = document.createElement('div');
-    cellEl.className = 'cell';
-    
-    if(cell.isPath){
-      cellEl.classList.add('path');
-    }
-    
-    if(cell.defender){
-      cellEl.classList.add('has-defender');
-      cellEl.innerHTML = `<div class="defender">${cell.defender.emoji}</div>`;
-    } else if(!cell.isPath){
-      cellEl.classList.add('placeable');
-      cellEl.onclick = () => placeDefender(idx);
-    }
-    
-    battleGridEl.appendChild(cellEl);
-  });
-  
-  // Render enemies on grid
-  state.enemies.forEach(enemy => {
-    if(enemy.spawnDelay > 0) return;
-    
-    const enemyEl = document.createElement('div');
-    enemyEl.className = 'enemy';
-    enemyEl.style.left = `${enemy.position.col * 12.5}%`;
-    enemyEl.style.top = `${enemy.position.row * 20}%`;
-    enemyEl.innerHTML = `
-      <div class="enemy-emoji">${enemy.emoji}</div>
-      <div class="enemy-hp">
-        <div class="enemy-hp-bar" style="width:${(enemy.hp / enemy.maxHp) * 100}%"></div>
-      </div>
-    `;
-    battleGridEl.appendChild(enemyEl);
-  });
-}
-
-function updateUI(){
-  coinsEl.textContent = Math.floor(state.coins);
-  gemsEl.textContent = Math.floor(state.gems);
-  livesEl.textContent = state.lives;
-  waveNumberEl.textContent = state.wave;
-  renderShop();
-  renderInventory();
-  renderBattleGrid();
-}
-
-function gameOver(){
-  state.isWaveActive = false;
-  alert(`Game Over! You survived ${state.wave - 1} waves!\n\nStarting fresh...`);
-  
-  // Reset game
-  state.lives = STARTING_LIVES;
-  state.wave = 1;
-  state.enemies = [];
-  state.defenders = [];
-  state.cells.forEach(cell => cell.defender = null);
-  
-  save();
-  updateUI();
-}
-
 /* --- Event Handlers --- */
-startWaveBtn.onclick = () => {
-  spawnWave();
-};
-
-gachaBtn.onclick = () => {
-  openGacha();
-};
-
-closeGachaBtn.onclick = () => {
-  gachaModal.classList.add('hidden');
-};
+startWaveBtn.addEventListener('click', () => spawnWave());
+gachaBtn.addEventListener('click', () => openGacha());
+closeGachaBtn.addEventListener('click', () => gachaModal.classList.add('hidden'));
 
 /* --- Game Loop --- */
 let last = Date.now();
@@ -604,6 +588,9 @@ function init(){
   if(!state.cells || state.cells.length === 0){
     initCells();
   }
+  
+  // create the persistent DOM grid once
+  createBattleGrid();
   
   // Initialize starter pets
   initStarterPets();
