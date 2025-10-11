@@ -3,40 +3,62 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Pet Grove Garden</title>
+  <title>Pet Defense - Tower Defense with Pets</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header>
-    <h1>🌱 Pet Grove Garden 🐾</h1>
+    <h1>🐾 Pet Defense Tower 🛡️</h1>
     <div id="resources">
       <span>Coins: <strong id="coinCount">0</strong> 💰</span>
+      <span>Gems: <strong id="gemCount">0</strong> 💎</span>
+      <span>Lives: <strong id="livesCount">20</strong> ❤️</span>
     </div>
   </header>
 
   <main>
     <section id="shopSection">
+      <h3>Pet Shop</h3>
       <div id="shop">
-        <!-- JS inserts shop items -->
+        <!-- JS inserts defender pets -->
+      </div>
+      <button id="gachaBtn" class="gacha-button">🎲 Pet Gacha (50 gems)</button>
+    </section>
+
+    <section id="battleSection">
+      <div id="waveInfo">
+        <h2>Wave <span id="waveNumber">1</span></h2>
+        <button id="startWaveBtn" class="wave-button">▶️ Start Wave</button>
+      </div>
+      <div id="battleGrid">
+        <!-- JS inserts battle grid -->
       </div>
     </section>
 
-    <section id="gardenSection">
-      <h2>Your Pet Garden</h2>
-      <p class="hint">💡 Select a pet from the shop, then click an empty plot to plant it!</p>
-      <div id="gardenGrid">
-        <!-- JS inserts garden plots -->
+    <section id="inventorySection">
+      <h3>Your Pets</h3>
+      <div id="inventory">
+        <!-- JS inserts owned pets -->
       </div>
     </section>
 
     <section id="logSection">
-      <h2>Activity Log</h2>
+      <h3>Battle Log</h3>
       <ul id="log" class="log"></ul>
     </section>
   </main>
 
+  <!-- Gacha Modal -->
+  <div id="gachaModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>🎲 Pet Gacha</h2>
+      <div id="gachaResult"></div>
+      <button id="closeGachaBtn">Close</button>
+    </div>
+  </div>
+
   <footer>
-    <small>Pet Grove — Plant, grow, and harvest pets for coins! Progress saves automatically.</small>
+    <small>Pet Defense — Deploy pets to defend against waves of enemies! Progress saves automatically.</small>
   </footer>
 
   <script src="script.js"></script>
