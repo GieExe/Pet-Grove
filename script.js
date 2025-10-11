@@ -373,6 +373,9 @@ function updateDefenders(deltaTime){
     }
     
     if(target){
+      // Add attack animation
+      triggerAttackAnimation(def);
+      
       // instant damage for simplicity
       target.hp -= def.damage;
       if(target.hp <= 0){
@@ -383,6 +386,24 @@ function updateDefenders(deltaTime){
       def.attackCooldown = def.attackSpeed;
     }
   });
+}
+
+// Trigger visual attack animation for defender
+function triggerAttackAnimation(def){
+  const cellIdx = def.row * GRID_COLS + def.col;
+  const cellEl = cellElements[cellIdx];
+  if(!cellEl) return;
+  
+  const defenderEl = cellEl.querySelector('.defender');
+  if(!defenderEl) return;
+  
+  // Add attack class for animation
+  defenderEl.classList.add('attacking');
+  
+  // Remove after animation completes
+  setTimeout(() => {
+    defenderEl.classList.remove('attacking');
+  }, 300);
 }
 
 /* --- UI Rendering (persistent grid) --- */
@@ -424,13 +445,17 @@ function updateBattleGrid() {
     if (!el) return;
     // reset base class
     el.className = 'cell';
-    if (cell.isPath) el.classList.add('path');
+    if (cell.isPath) {
+      el.classList.add('path');
+    }
     if (cell.defender) {
       el.classList.add('has-defender');
       el.innerHTML = `<div class="defender">${cell.defender.emoji}</div>`;
     } else {
       el.innerHTML = '';
-      if (!cell.isPath) el.classList.add('placeable');
+      if (!cell.isPath) {
+        el.classList.add('placeable');
+      }
     }
   });
 }
@@ -588,9 +613,10 @@ function gameLoop(){
     if(state.isWaveActive){
       updateEnemies(deltaSec);
       updateDefenders(deltaSec);
+      // Only update UI during active wave for better performance
+      updateUI();
     }
     
-    updateUI();
     last = now;
   }
   
