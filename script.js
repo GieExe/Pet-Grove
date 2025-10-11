@@ -154,13 +154,13 @@ function log(msg){
 }
 
 function save(){
-  // Don't save active wave state
+  // Save state but clear wave-specific data
+  // Need to save defenders and update cell references
   const saveState = {
     ...state,
     isWaveActive: false,
     enemies: [],
-    projectiles: [],
-    defenders: []
+    projectiles: []
   };
   localStorage.setItem('petdefense_state', JSON.stringify(saveState));
 }
@@ -630,6 +630,19 @@ function init(){
   // Initialize grid
   if(!state.cells || state.cells.length === 0){
     initCells();
+  }
+  
+  // Ensure defenders array exists
+  if(!state.defenders) state.defenders = [];
+  
+  // Rebuild defender references in cells from loaded defenders
+  if(state.defenders.length > 0){
+    state.defenders.forEach(def => {
+      const cellIdx = def.row * GRID_COLS + def.col;
+      if(state.cells[cellIdx]){
+        state.cells[cellIdx].defender = def;
+      }
+    });
   }
   
   // create the persistent DOM grid once
