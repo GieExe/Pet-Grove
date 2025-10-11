@@ -112,6 +112,10 @@ section{
   border-color:var(--primary);
 }
 
+.shop-item:hover *{
+  pointer-events:none;
+}
+
 .shop-emoji{
   font-size:28px;
   width:40px;
@@ -294,6 +298,10 @@ section{
   background:rgba(255,255,255,0.1);
   border-color:var(--primary);
   transform:translateY(-2px);
+}
+
+.inventory-item:hover *{
+  pointer-events:none;
 }
 
 .inventory-item.selected{
