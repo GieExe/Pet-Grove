@@ -4,16 +4,18 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 
 ## Features
 - 🛡️ **Tower Defense Gameplay** - Deploy pets strategically to defend against enemy waves
-- 🐾 **Multiple Pet Defenders** - 14 unique pets with different stats, rarities, and abilities
+- 🐾 **Multiple Pet Defenders** - 28 unique pets with different stats, rarities, and abilities
 - 💰 **Dual Currency System** - Earn coins from battles and gems from wave completion
 - 🎲 **Gacha System** - Pull for new pets with rarity tiers (Common, Rare, Epic, Legendary)
 - 🌊 **Wave-Based Combat** - Face increasingly difficult waves with varied enemy types
-- ⚔️ **Real-Time Combat** - Watch your pets automatically attack enemies in range
+- ⚔️ **Real-Time Combat** - Watch your pets automatically attack enemies in range with enhanced projectile effects
 - 📊 **Strategic Depth** - Balance pet placement, range, damage, and attack speed
 - 💎 **Rarity System** - Collect pets from common to legendary with different power levels
 - 💾 **Auto-Save** - Progress automatically saves to `localStorage`
 - 🎨 **Dark Theme UI** - Modern, polished design with smooth animations
 - 🐛 **Stable Hover Effects** - Smooth, non-flickering hover animations on all interactive elements
+- 💥 **Enhanced Projectiles** - Spinning projectiles with glow effects and impact animations
+- ⚠️ **Permanent Sale** - Sold pets are gone forever (with confirmation dialog)
 
 ## How to Play
 1. Open `index.html` in a modern browser
@@ -37,28 +39,42 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 ## Game Mechanics
 
 ### Starting Resources
-- **Coins**: 100
-- **Gems**: 50
+- **Coins**: 150
+- **Gems**: 100
 - **Lives**: 20
 - **Starter Pets**: 2 (Guard Dog & Ninja Cat)
 
 ### Pet Defenders
 | Pet | Rarity | Damage | Range | Attack Speed | Description |
 |-----|--------|--------|-------|--------------|-------------|
-| 🐶 Guard Dog | Common | 10 | 1.5 | 1.0s | Basic melee defender |
-| 🐱 Ninja Cat | Common | 15 | 2.0 | 0.8s | Fast attacker |
-| 🐰 Swift Bunny | Common | 8 | 1.8 | 0.6s | Very fast attacker |
-| 🐢 Tank Turtle | Common | 18 | 1.2 | 2.0s | Slow but tough |
-| 🐼 Kung Fu Panda | Rare | 25 | 1.5 | 1.5s | Strong melee fighter |
-| 🦉 Wise Owl | Rare | 12 | 3.5 | 1.5s | Long range sniper |
-| 🐻 Grizzly Bear | Rare | 30 | 1.8 | 1.8s | Powerful close range |
-| 🐺 Alpha Wolf | Rare | 22 | 2.2 | 1.2s | Balanced fighter |
-| 🐲 Fire Dragon | Epic | 40 | 3.0 | 2.0s | Powerful ranged attacker |
-| 🐯 Bengal Tiger | Epic | 38 | 2.0 | 1.4s | Fierce predator |
-| 🦅 Phoenix | Epic | 35 | 3.5 | 1.6s | Aerial superiority |
-| 🦁 Lion King | Legendary | 50 | 2.0 | 1.2s | Ultimate damage dealer |
-| 🦄 Unicorn | Legendary | 45 | 2.8 | 1.0s | Magical powerhouse |
-| 🦖 T-Rex | Legendary | 55 | 1.6 | 1.8s | Prehistoric destroyer |
+| 🐶 Guard Dog | Common | 20 | 1.5 | 0.8s | Basic melee defender |
+| 🐱 Ninja Cat | Common | 25 | 2.0 | 0.6s | Fast attacker |
+| 🐰 Swift Bunny | Common | 18 | 1.8 | 0.5s | Very fast attacker |
+| 🐢 Tank Turtle | Common | 30 | 1.2 | 1.5s | Slow but tough |
+| 🦊 Clever Fox | Common | 22 | 2.2 | 0.7s | Cunning and quick |
+| 🦝 Sneaky Raccoon | Common | 20 | 1.7 | 0.7s | Stealthy attacker |
+| 🐧 Ice Penguin | Common | 24 | 2.1 | 0.9s | Cool defender |
+| 🐨 Koala Warrior | Common | 28 | 1.4 | 1.3s | Sleepy but strong |
+| 🐼 Kung Fu Panda | Rare | 40 | 1.5 | 1.2s | Strong melee fighter |
+| 🦉 Wise Owl | Rare | 28 | 3.5 | 1.0s | Long range sniper |
+| 🐻 Grizzly Bear | Rare | 50 | 1.8 | 1.4s | Powerful close range |
+| 🐺 Alpha Wolf | Rare | 38 | 2.2 | 0.9s | Balanced fighter |
+| 🐵 Warrior Monkey | Rare | 35 | 1.6 | 0.8s | Agile fighter |
+| 🦅 War Eagle | Rare | 32 | 3.8 | 1.1s | Sky dominator |
+| 🦍 Gorilla Guard | Rare | 48 | 1.3 | 1.6s | Powerful tank |
+| 🦏 Rhino Charger | Rare | 52 | 1.5 | 1.7s | Heavy hitter |
+| 🐆 Speed Leopard | Rare | 42 | 2.5 | 0.7s | Lightning fast |
+| 🐲 Fire Dragon | Epic | 70 | 3.0 | 1.5s | Powerful ranged attacker |
+| 🐯 Bengal Tiger | Epic | 65 | 2.0 | 1.0s | Fierce predator |
+| 🦅 Phoenix | Epic | 60 | 3.5 | 1.2s | Aerial superiority |
+| 🦈 Land Shark | Epic | 68 | 1.8 | 1.1s | Devastating attacker |
+| 🐉 Hydra | Epic | 72 | 2.8 | 1.3s | Multi-headed beast |
+| 🦅 Griffin | Epic | 68 | 3.2 | 1.0s | Mythical guardian |
+| 🐺 Cerberus | Epic | 75 | 1.9 | 1.1s | Three-headed guardian |
+| 🦁 Lion King | Legendary | 90 | 2.0 | 0.8s | Ultimate damage dealer |
+| 🦄 Unicorn | Legendary | 80 | 2.8 | 0.7s | Magical powerhouse |
+| 🦖 T-Rex | Legendary | 100 | 1.6 | 1.2s | Prehistoric destroyer |
+| 🐙 Kraken | Legendary | 85 | 3.0 | 0.9s | Tentacled terror |
 
 ### Enemy Types
 - **👾 Slime** - Basic enemy (50 HP, 1.0 speed)
@@ -75,7 +91,7 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 - **Rare**: 25% chance
 - **Epic**: 12% chance
 - **Legendary**: 3% chance
-- **Cost**: 50 gems per pull
+- **Cost**: 40 gems per pull
 
 ### Wave Rewards
 - Coins increase with each wave completed
@@ -91,11 +107,13 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 
 ## New Features (Latest Update)
 - ⬆️ **Tower Upgrade System** - Upgrade defenders for better stats (+20% per level)
-- 💰 **Sell Towers** - Sell defenders for 70% refund to reposition strategy
+- 💰 **Permanent Sale System** - Sold pets are gone forever (with confirmation dialog) - strategic decisions matter!
 - 🔄 **Move Towers** - Relocate defenders without losing upgrade progress
 - 📊 **Stat Display** - Hover over defenders to see detailed stats
 - ⌨️ **Keyboard Shortcuts** - Space/Enter for waves, G for gacha, Esc to close
-- 🎯 **Improved Projectiles** - Better accuracy and tracking
+- 💥 **Enhanced Projectiles** - Spinning animations with glow effects, dynamic projectile types based on damage, and impact effects
+- 🐾 **Expanded Pet Collection** - 28 total pets (up from 18) including new common, rare, and epic pets
+- 📈 **Quality of Life** - Pet count in inventory, defender count in wave info, pet preview on placeable cells
 - 🗺️ **Optimized Path** - Straight-line path for more strategic placement
 
 ## Future Ideas
