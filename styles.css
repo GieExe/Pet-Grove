@@ -266,6 +266,29 @@ section{
   z-index:3;
 }
 
+.defender-info{
+  position:absolute;
+  top:2px;
+  left:2px;
+  background:rgba(0,0,0,0.8);
+  padding:4px 6px;
+  border-radius:4px;
+  font-size:10px;
+  opacity:0;
+  transition:opacity 0.2s;
+  z-index:3;
+  pointer-events:none;
+}
+
+.cell.has-defender:hover .defender-info{
+  opacity:1;
+}
+
+.info-line{
+  line-height:1.2;
+  white-space:nowrap;
+}
+
 .defender-controls{
   position:absolute;
   bottom:2px;
@@ -537,6 +560,26 @@ button:hover{
 }
 
 .hidden{display:none}
+
+.save-indicator{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:rgba(106,176,76,0.9);
+  color:white;
+  padding:12px 20px;
+  border-radius:8px;
+  font-weight:600;
+  opacity:0;
+  transform:translateY(20px);
+  transition:all 0.3s;
+  z-index:2000;
+}
+
+.save-indicator.show{
+  opacity:1;
+  transform:translateY(0);
+}
 
 footer{
   text-align:center;

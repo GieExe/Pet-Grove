@@ -164,6 +164,20 @@ function save(){
     projectiles: []
   };
   localStorage.setItem('petdefense_state', JSON.stringify(saveState));
+  // Show save indicator briefly
+  showSaveIndicator();
+}
+
+function showSaveIndicator(){
+  const indicator = document.createElement('div');
+  indicator.className = 'save-indicator';
+  indicator.textContent = '💾 Saved';
+  document.body.appendChild(indicator);
+  setTimeout(() => indicator.classList.add('show'), 10);
+  setTimeout(() => {
+    indicator.classList.remove('show');
+    setTimeout(() => indicator.remove(), 300);
+  }, 1500);
 }
 
 function load(){
@@ -471,7 +485,11 @@ function createBattleGrid() {
     else {
       cellEl.classList.add('placeable');
       // stable event listener
-      cellEl.addEventListener('click', () => placeDefender(idx));
+      cellEl.addEventListener('click', (e) => {
+        // Don't place if clicking on a button
+        if(e.target.tagName === 'BUTTON') return;
+        placeDefender(idx);
+      });
     }
     battleGridEl.appendChild(cellEl);
     cellElements[idx] = cellEl;
@@ -503,13 +521,21 @@ function updateBattleGrid() {
       el.classList.add('has-defender');
       const upgradeLevel = cell.defender.upgradeLevel || 0;
       const levelBadge = upgradeLevel > 0 ? `<span class="upgrade-badge">+${upgradeLevel}</span>` : '';
+      const upgradeCost = Math.floor((cell.defender.cost || 50) * 0.5 * (upgradeLevel + 1));
+      const sellValue = Math.floor(((cell.defender.cost || 50) + (cell.defender.totalCost || 0)) * 0.7);
+      
       el.innerHTML = `
         <div class="defender">${cell.defender.emoji}</div>
         ${levelBadge}
+        <div class="defender-info">
+          <div class="info-line">💪 ${Math.floor(cell.defender.damage)}</div>
+          <div class="info-line">📏 ${cell.defender.range.toFixed(1)}</div>
+          <div class="info-line">⚡ ${cell.defender.attackSpeed.toFixed(2)}s</div>
+        </div>
         <div class="defender-controls">
-          <button class="control-btn upgrade-btn" onclick="upgradeDefender(${idx})" title="Upgrade">⬆️</button>
+          <button class="control-btn upgrade-btn" onclick="upgradeDefender(${idx})" title="Upgrade (${upgradeCost} coins)">⬆️</button>
           <button class="control-btn move-btn" onclick="moveDefender(${idx})" title="Move">🔄</button>
-          <button class="control-btn sell-btn" onclick="sellDefender(${idx})" title="Sell">💰</button>
+          <button class="control-btn sell-btn" onclick="sellDefender(${idx})" title="Sell (${sellValue} coins)">💰</button>
         </div>
       `;
     } else {
@@ -609,7 +635,14 @@ function updateUI(){
   coinsEl.textContent = Math.floor(state.coins);
   gemsEl.textContent = Math.floor(state.gems);
   livesEl.textContent = state.lives;
-  waveNumberEl.textContent = state.wave;
+  
+  // Show wave number with enemy count during active wave
+  if(state.isWaveActive && state.enemies.length > 0){
+    waveNumberEl.textContent = `${state.wave} (${state.enemies.length} enemies)`;
+  } else {
+    waveNumberEl.textContent = state.wave;
+  }
+  
   updateBattleGrid();
   renderEnemies();
 }
@@ -767,6 +800,23 @@ function placeDefender(cellIdx){
 startWaveBtn.addEventListener('click', () => spawnWave());
 gachaBtn.addEventListener('click', () => openGacha());
 closeGachaBtn.addEventListener('click', () => gachaModal.classList.add('hidden'));
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  // Space or Enter to start wave
+  if((e.key === ' ' || e.key === 'Enter') && !state.isWaveActive && gachaModal.classList.contains('hidden')){
+    e.preventDefault();
+    spawnWave();
+  }
+  // G for gacha
+  if(e.key === 'g' || e.key === 'G'){
+    openGacha();
+  }
+  // Escape to close modal
+  if(e.key === 'Escape' && !gachaModal.classList.contains('hidden')){
+    gachaModal.classList.add('hidden');
+  }
+});
 
 // Make tower management functions globally accessible
 window.upgradeDefender = upgradeDefender;
