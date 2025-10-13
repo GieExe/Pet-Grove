@@ -19,11 +19,15 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 1. Open `index.html` in a modern browser
 2. **Select a Pet** - Click on a pet in "Your Pets" inventory to select it
 3. **Deploy Defenders** - Click on empty (dark blue) grid cells to place your pet
-4. **Start Wave** - Click "▶️ Start Wave" to begin the enemy assault
+4. **Start Wave** - Click "▶️ Start Wave" or press Space/Enter to begin the enemy assault
 5. **Defend** - Your pets will automatically attack enemies in range
-6. **Earn Rewards** - Complete waves to earn coins and gems
-7. **Use Gacha** - Spend 50 gems to pull for new pets with random rarities
-8. **Survive** - Don't let enemies reach the end or you'll lose lives!
+6. **Manage Towers** - Hover over defenders to see stats and access controls:
+   - ⬆️ **Upgrade** - Improve stats for 50% of base cost per level
+   - 🔄 **Move** - Relocate defender (keeps upgrade progress)
+   - 💰 **Sell** - Remove defender for 70% refund
+7. **Earn Rewards** - Complete waves to earn coins and gems
+8. **Use Gacha** - Spend 40 gems to pull for new pets with random rarities (Press G)
+9. **Survive** - Don't let enemies reach the end or you'll lose lives!
 
 ## How to Run
 1. Clone or download the repository
@@ -85,8 +89,16 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 - Higher rarity pets have significantly better stats
 - Balance your currency spending between deployment and gacha
 
+## New Features (Latest Update)
+- ⬆️ **Tower Upgrade System** - Upgrade defenders for better stats (+20% per level)
+- 💰 **Sell Towers** - Sell defenders for 70% refund to reposition strategy
+- 🔄 **Move Towers** - Relocate defenders without losing upgrade progress
+- 📊 **Stat Display** - Hover over defenders to see detailed stats
+- ⌨️ **Keyboard Shortcuts** - Space/Enter for waves, G for gacha, Esc to close
+- 🎯 **Improved Projectiles** - Better accuracy and tracking
+- 🗺️ **Optimized Path** - Straight-line path for more strategic placement
+
 ## Future Ideas
-- Pet upgrade system
 - Multiple paths/maps
 - Special abilities for legendary pets
 - Boss waves
@@ -94,6 +106,7 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 - More enemy variety
 - Sound effects and music
 - Pet fusion/evolution
+- Tower targeting modes (first, last, strongest)
 
 ## License
 - MIT

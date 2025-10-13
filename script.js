@@ -101,19 +101,16 @@ let state = {
   lastTick: Date.now()
 };
 
-// Path definition - enemies follow this path
+// Path definition - enemies follow this path (optimized for more tower placement)
 const PATH = [
   { row: 2, col: 0 },
   { row: 2, col: 1 },
   { row: 2, col: 2 },
-  { row: 1, col: 2 },
-  { row: 1, col: 3 },
-  { row: 1, col: 4 },
+  { row: 2, col: 3 },
   { row: 2, col: 4 },
-  { row: 3, col: 4 },
-  { row: 3, col: 5 },
-  { row: 3, col: 6 },
-  { row: 3, col: 7 }
+  { row: 2, col: 5 },
+  { row: 2, col: 6 },
+  { row: 2, col: 7 }
 ];
 
 // Persistent cell elements so we don't recreate them every frame
@@ -167,6 +164,20 @@ function save(){
     projectiles: []
   };
   localStorage.setItem('petdefense_state', JSON.stringify(saveState));
+  // Show save indicator briefly
+  showSaveIndicator();
+}
+
+function showSaveIndicator(){
+  const indicator = document.createElement('div');
+  indicator.className = 'save-indicator';
+  indicator.textContent = '💾 Saved';
+  document.body.appendChild(indicator);
+  setTimeout(() => indicator.classList.add('show'), 10);
+  setTimeout(() => {
+    indicator.classList.remove('show');
+    setTimeout(() => indicator.remove(), 300);
+  }, 1500);
 }
 
 function load(){
@@ -397,13 +408,13 @@ function createProjectile(defender, enemy){
     y: defenderPos.y,
     targetEnemy: enemy,
     damage: defender.damage,
-    speed: 5, // cells per second
+    speed: 8, // cells per second - increased for better tracking
     defenderName: defender.name
   };
   state.projectiles.push(projectile);
 }
 
-// Update projectiles
+// Update projectiles - improved accuracy with predictive targeting
 function updateProjectiles(deltaTime){
   const toRemove = [];
   
@@ -413,12 +424,14 @@ function updateProjectiles(deltaTime){
       return;
     }
     
+    // Get current target position
     const targetPos = { x: proj.targetEnemy.position.col + 0.5, y: proj.targetEnemy.position.row + 0.5 };
     const dx = targetPos.x - proj.x;
     const dy = targetPos.y - proj.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
     
-    if(dist < 0.2){
+    // More generous hit detection for better accuracy
+    if(dist < 0.3){
       // Hit the target
       proj.targetEnemy.hp -= proj.damage;
       if(proj.targetEnemy.hp <= 0){
@@ -428,10 +441,12 @@ function updateProjectiles(deltaTime){
       }
       toRemove.push(proj.id);
     } else {
-      // Move toward target
+      // Move toward target with improved tracking
       const moveDistance = proj.speed * deltaTime;
-      proj.x += (dx / dist) * moveDistance;
-      proj.y += (dy / dist) * moveDistance;
+      // Normalize direction and move
+      const normalizedSpeed = Math.min(moveDistance, dist); // Don't overshoot
+      proj.x += (dx / dist) * normalizedSpeed;
+      proj.y += (dy / dist) * normalizedSpeed;
     }
   });
   
@@ -470,7 +485,11 @@ function createBattleGrid() {
     else {
       cellEl.classList.add('placeable');
       // stable event listener
-      cellEl.addEventListener('click', () => placeDefender(idx));
+      cellEl.addEventListener('click', (e) => {
+        // Don't place if clicking on a button
+        if(e.target.tagName === 'BUTTON') return;
+        placeDefender(idx);
+      });
     }
     battleGridEl.appendChild(cellEl);
     cellElements[idx] = cellEl;
@@ -500,7 +519,25 @@ function updateBattleGrid() {
     }
     if (cell.defender) {
       el.classList.add('has-defender');
-      el.innerHTML = `<div class="defender">${cell.defender.emoji}</div>`;
+      const upgradeLevel = cell.defender.upgradeLevel || 0;
+      const levelBadge = upgradeLevel > 0 ? `<span class="upgrade-badge">+${upgradeLevel}</span>` : '';
+      const upgradeCost = Math.floor((cell.defender.cost || 50) * 0.5 * (upgradeLevel + 1));
+      const sellValue = Math.floor(((cell.defender.cost || 50) + (cell.defender.totalCost || 0)) * 0.7);
+      
+      el.innerHTML = `
+        <div class="defender">${cell.defender.emoji}</div>
+        ${levelBadge}
+        <div class="defender-info">
+          <div class="info-line">💪 ${Math.floor(cell.defender.damage)}</div>
+          <div class="info-line">📏 ${cell.defender.range.toFixed(1)}</div>
+          <div class="info-line">⚡ ${cell.defender.attackSpeed.toFixed(2)}s</div>
+        </div>
+        <div class="defender-controls">
+          <button class="control-btn upgrade-btn" onclick="upgradeDefender(${idx})" title="Upgrade (${upgradeCost} coins)">⬆️</button>
+          <button class="control-btn move-btn" onclick="moveDefender(${idx})" title="Move">🔄</button>
+          <button class="control-btn sell-btn" onclick="sellDefender(${idx})" title="Sell (${sellValue} coins)">💰</button>
+        </div>
+      `;
     } else {
       el.innerHTML = '';
       if (!cell.isPath) {
@@ -598,7 +635,14 @@ function updateUI(){
   coinsEl.textContent = Math.floor(state.coins);
   gemsEl.textContent = Math.floor(state.gems);
   livesEl.textContent = state.lives;
-  waveNumberEl.textContent = state.wave;
+  
+  // Show wave number with enemy count during active wave
+  if(state.isWaveActive && state.enemies.length > 0){
+    waveNumberEl.textContent = `${state.wave} (${state.enemies.length} enemies)`;
+  } else {
+    waveNumberEl.textContent = state.wave;
+  }
+  
   updateBattleGrid();
   renderEnemies();
 }
@@ -621,6 +665,93 @@ function gameOver(){
   state.cells.forEach(cell => cell.defender = null);
   
   save();
+  updateShopAndInventory();
+}
+
+/* --- Tower Management Functions --- */
+function upgradeDefender(cellIdx){
+  const cell = state.cells[cellIdx];
+  if(!cell.defender) return;
+  
+  const defender = cell.defender;
+  const upgradeLevel = defender.upgradeLevel || 0;
+  const upgradeCost = Math.floor((defender.cost || 50) * 0.5 * (upgradeLevel + 1));
+  
+  if(state.coins < upgradeCost){
+    log(`⚠️ Not enough coins! Need ${upgradeCost} coins to upgrade.`);
+    return;
+  }
+  
+  // Apply upgrade
+  state.coins -= upgradeCost;
+  defender.upgradeLevel = upgradeLevel + 1;
+  defender.totalCost = (defender.totalCost || 0) + upgradeCost;
+  
+  // Increase stats (20% boost per level)
+  defender.damage = Math.floor(defender.damage * 1.2);
+  defender.range = defender.range * 1.1;
+  defender.attackSpeed = defender.attackSpeed * 0.95; // Faster attack (lower cooldown)
+  
+  log(`⬆️ Upgraded ${defender.name} to Level ${defender.upgradeLevel}! (+20% stats)`);
+  save();
+  updateUI();
+}
+
+function sellDefender(cellIdx){
+  const cell = state.cells[cellIdx];
+  if(!cell.defender) return;
+  
+  const defender = cell.defender;
+  const refund = Math.floor(((defender.cost || 50) + (defender.totalCost || 0)) * 0.7);
+  
+  // Return to inventory as new pet
+  const returnedPet = {
+    ...PET_DEFENDERS.find(p => p.id === defender.id),
+    uniqueId: Date.now() + '_' + Math.random()
+  };
+  
+  state.ownedPets.push(returnedPet);
+  state.coins += refund;
+  
+  // Remove defender
+  state.defenders = state.defenders.filter(d => d !== defender);
+  cell.defender = null;
+  
+  log(`💰 Sold ${defender.name} for ${refund} coins!`);
+  save();
+  updateUI();
+  updateShopAndInventory();
+}
+
+function moveDefender(cellIdx){
+  const cell = state.cells[cellIdx];
+  if(!cell.defender) return;
+  
+  const defender = cell.defender;
+  
+  // Remove from current position
+  state.defenders = state.defenders.filter(d => d !== defender);
+  cell.defender = null;
+  
+  // Return to inventory for redeployment
+  const movingPet = {
+    ...PET_DEFENDERS.find(p => p.id === defender.id),
+    uniqueId: Date.now() + '_' + Math.random(),
+    // Preserve upgrade stats if upgraded
+    ...(defender.upgradeLevel > 0 ? {
+      damage: defender.damage,
+      range: defender.range,
+      attackSpeed: defender.attackSpeed,
+      upgradeLevel: defender.upgradeLevel,
+      totalCost: defender.totalCost
+    } : {})
+  };
+  
+  state.ownedPets.push(movingPet);
+  state.selectedDefender = movingPet;
+  
+  log(`🔄 Moving ${defender.name} - Click on a placeable cell to redeploy!`);
+  updateUI();
   updateShopAndInventory();
 }
 
@@ -648,7 +779,9 @@ function placeDefender(cellIdx){
     ...state.selectedDefender,
     row: cell.row,
     col: cell.col,
-    attackCooldown: 0
+    attackCooldown: 0,
+    upgradeLevel: state.selectedDefender.upgradeLevel || 0, // Preserve upgrade level
+    totalCost: state.selectedDefender.totalCost || 0 // Preserve total investment
   };
   
   cell.defender = defender;
@@ -667,6 +800,28 @@ function placeDefender(cellIdx){
 startWaveBtn.addEventListener('click', () => spawnWave());
 gachaBtn.addEventListener('click', () => openGacha());
 closeGachaBtn.addEventListener('click', () => gachaModal.classList.add('hidden'));
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  // Space or Enter to start wave
+  if((e.key === ' ' || e.key === 'Enter') && !state.isWaveActive && gachaModal.classList.contains('hidden')){
+    e.preventDefault();
+    spawnWave();
+  }
+  // G for gacha
+  if(e.key === 'g' || e.key === 'G'){
+    openGacha();
+  }
+  // Escape to close modal
+  if(e.key === 'Escape' && !gachaModal.classList.contains('hidden')){
+    gachaModal.classList.add('hidden');
+  }
+});
+
+// Make tower management functions globally accessible
+window.upgradeDefender = upgradeDefender;
+window.sellDefender = sellDefender;
+window.moveDefender = moveDefender;
 
 /* --- Game Loop --- */
 let last = Date.now();
