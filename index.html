@@ -23,12 +23,20 @@
         <!-- JS inserts defender pets -->
       </div>
       <button id="gachaBtn" class="gacha-button">🎲 Pet Gacha (40 gems)</button>
+      <button id="statsBtn" class="stats-button">📊 Statistics</button>
     </section>
 
     <section id="battleSection">
       <div id="waveInfo">
         <h2>Wave <span id="waveNumber">1</span></h2>
-        <button id="startWaveBtn" class="wave-button">▶️ Start Wave</button>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="mapSelector" style="padding:8px;border-radius:6px;background:#16213e;color:white;border:1px solid #0f3460">
+            <option value="classic">Classic</option>
+            <option value="zigzag">Zigzag</option>
+            <option value="spiral">Spiral</option>
+          </select>
+          <button id="startWaveBtn" class="wave-button">▶️ Start Wave</button>
+        </div>
       </div>
       <div id="battleGrid">
         <!-- JS inserts battle grid -->
@@ -56,11 +64,20 @@
       <button id="closeGachaBtn">Close</button>
     </div>
   </div>
+  
+  <!-- Stats Modal -->
+  <div id="statsModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>📊 Game Statistics</h2>
+      <div id="statsDisplay"></div>
+      <button id="closeStatsBtn">Close</button>
+    </div>
+  </div>
 
   <footer>
     <small>Pet Defense — Deploy pets to defend against waves of enemies! Progress saves automatically.</small>
     <small style="display:block;margin-top:8px;color:#888;">
-      💡 Hover over defenders to see stats and controls | ⬆️ Upgrade | 🔄 Move | 💰 Sell | Shortcuts: Space/Enter=Start Wave, G=Gacha, Esc=Close
+      💡 Hover over defenders to see stats and controls | ⬆️ Upgrade | 🔄 Move | 💰 Sell | Shortcuts: Space/Enter=Start Wave, G=Gacha, S=Stats, Esc=Close
     </small>
   </footer>
 

@@ -2,8 +2,8 @@
 
 /* --- Configuration --- */
 const TICK_INTERVAL = 100; // ms - faster for TD gameplay
-const GRID_ROWS = 5;
-const GRID_COLS = 8;
+const GRID_ROWS = 7; // Expanded from 5 to 7 for more placement space
+const GRID_COLS = 10; // Expanded from 8 to 10 for more placement space
 const STARTING_COINS = 150;
 const STARTING_GEMS = 100;
 const STARTING_LIVES = 20;
@@ -73,7 +73,19 @@ const PET_DEFENDERS = [
   { id: 'butterfly', emoji: '🦋', name: 'Mystic Butterfly', cost: 135, damage: 32, range: 3.0, attackSpeed: 0.9, rarity:'rare', description:'Magical wings', ability:'lifesteal' },
   { id: 'crab', emoji: '🦀', name: 'Armored Crab', cost: 105, damage: 38, range: 1.3, attackSpeed: 1.4, rarity:'common', description:'Hard shell defender', ability:'stun' },
   { id: 'flamingo', emoji: '🦩', name: 'Flame Flamingo', cost: 340, damage: 70, range: 3.3, attackSpeed: 1.2, rarity:'epic', description:'Elegant fire bird', ability:'burn' },
-  { id: 'sloth', emoji: '🦥', name: 'Battle Sloth', cost: 95, damage: 45, range: 1.5, attackSpeed: 2.0, rarity:'common', description:'Slow but mighty', ability:'stun' }
+  { id: 'sloth', emoji: '🦥', name: 'Battle Sloth', cost: 95, damage: 45, range: 1.5, attackSpeed: 2.0, rarity:'common', description:'Slow but mighty', ability:'stun' },
+  { id: 'cheetah', emoji: '🐆', name: 'Cheetah Runner', cost: 115, damage: 38, range: 2.0, attackSpeed: 0.4, rarity:'common', description:'Fastest attacker', ability:'multishot' },
+  { id: 'kangaroo', emoji: '🦘', name: 'Boxing Kangaroo', cost: 125, damage: 42, range: 1.7, attackSpeed: 0.8, rarity:'common', description:'Punch combo fighter' },
+  { id: 'camel', emoji: '🐫', name: 'Desert Camel', cost: 135, damage: 40, range: 2.3, attackSpeed: 1.3, rarity:'rare', description:'Desert warrior' },
+  { id: 'giraffe', emoji: '🦒', name: 'Long Neck', cost: 145, damage: 36, range: 4.0, attackSpeed: 1.5, rarity:'rare', description:'Ultra long range' },
+  { id: 'hippo', emoji: '🦛', name: 'River Hippo', cost: 180, damage: 60, range: 1.4, attackSpeed: 1.9, rarity:'rare', description:'Heavy tank', ability:'splash' },
+  { id: 'moose', emoji: '🦌', name: 'Moose Charger', cost: 155, damage: 50, range: 1.8, attackSpeed: 1.4, rarity:'rare', description:'Antler attacker', ability:'stun' },
+  { id: 'mammoth', emoji: '🦣', name: 'Mammoth', cost: 350, damage: 88, range: 1.6, attackSpeed: 1.8, rarity:'epic', description:'Ancient powerhouse', ability:'splash' },
+  { id: 'dodo', emoji: '🦤', name: 'Ancient Dodo', cost: 300, damage: 65, range: 2.5, attackSpeed: 1.3, rarity:'epic', description:'Extinct warrior' },
+  { id: 'peacock', emoji: '🦚', name: 'Royal Peacock', cost: 315, damage: 68, range: 3.0, attackSpeed: 1.1, rarity:'epic', description:'Dazzling defender', ability:'slow' },
+  { id: 'phoenix2', emoji: '🔥', name: 'True Phoenix', cost: 550, damage: 95, range: 3.8, attackSpeed: 0.9, rarity:'legendary', description:'Reborn from ashes', ability:'burn' },
+  { id: 'yeti', emoji: '❄️', name: 'Frost Yeti', cost: 530, damage: 92, range: 2.2, attackSpeed: 1.0, rarity:'legendary', description:'Ice beast', ability:'slow' },
+  { id: 'chimera', emoji: '🐲', name: 'Chimera', cost: 560, damage: 98, range: 2.6, attackSpeed: 0.8, rarity:'legendary', description:'Triple threat', ability:'splash' }
 ];
 
 const ENEMY_TYPES = [
@@ -84,7 +96,15 @@ const ENEMY_TYPES = [
   { id: 'ghost', emoji: '👻', name: 'Ghost', hp: 70, speed: 1.3, reward: 30, gems: 2 },
   { id: 'demon', emoji: '😈', name: 'Demon', hp: 200, speed: 1.5, reward: 60, gems: 5 },
   { id: 'skull', emoji: '💀', name: 'Skeleton', hp: 80, speed: 1.1, reward: 32, gems: 2 },
-  { id: 'alien', emoji: '👽', name: 'Alien', hp: 120, speed: 1.0, reward: 45, gems: 3 }
+  { id: 'alien', emoji: '👽', name: 'Alien', hp: 120, speed: 1.0, reward: 45, gems: 3 },
+  { id: 'zombie', emoji: '🧟', name: 'Zombie', hp: 90, speed: 0.7, reward: 28, gems: 2 },
+  { id: 'vampire', emoji: '🧛', name: 'Vampire', hp: 150, speed: 1.4, reward: 50, gems: 4 },
+  { id: 'werewolf', emoji: '🐺', name: 'Werewolf', hp: 180, speed: 1.6, reward: 55, gems: 4 },
+  { id: 'mummy', emoji: '🧟‍♂️', name: 'Mummy', hp: 110, speed: 0.9, reward: 38, gems: 3 },
+  { id: 'witch', emoji: '🧙', name: 'Witch', hp: 140, speed: 1.1, reward: 48, gems: 3 },
+  { id: 'troll', emoji: '🧌', name: 'Troll', hp: 250, speed: 0.6, reward: 70, gems: 6 },
+  { id: 'dragon', emoji: '🐲', name: 'Mini Dragon', hp: 300, speed: 1.2, reward: 80, gems: 7 },
+  { id: 'golem', emoji: '🗿', name: 'Stone Golem', hp: 350, speed: 0.5, reward: 90, gems: 8 }
 ];
 
 // Gacha rarities and rates
@@ -123,20 +143,71 @@ let state = {
   ownedPets: [], // pets from gacha
   selectedDefender: null,
   enemyIdCounter: 0,
-  lastTick: Date.now()
+  lastTick: Date.now(),
+  selectedMap: 'classic', // Current map selection
+  stats: { // Game statistics
+    totalEnemiesDefeated: 0,
+    totalDamageDealt: 0,
+    wavesCompleted: 0,
+    gachaRolls: 0,
+    highestWave: 1,
+    totalCoinsEarned: 0,
+    totalGemsEarned: 0
+  }
 };
 
 // Path definition - enemies follow this path (optimized for more tower placement)
-const PATH = [
-  { row: 2, col: 0 },
-  { row: 2, col: 1 },
-  { row: 2, col: 2 },
-  { row: 2, col: 3 },
-  { row: 2, col: 4 },
-  { row: 2, col: 5 },
-  { row: 2, col: 6 },
-  { row: 2, col: 7 }
-];
+// Multiple map layouts available
+const MAPS = {
+  classic: [
+    { row: 3, col: 0 },
+    { row: 3, col: 1 },
+    { row: 3, col: 2 },
+    { row: 3, col: 3 },
+    { row: 3, col: 4 },
+    { row: 3, col: 5 },
+    { row: 3, col: 6 },
+    { row: 3, col: 7 },
+    { row: 3, col: 8 },
+    { row: 3, col: 9 }
+  ],
+  zigzag: [
+    { row: 1, col: 0 },
+    { row: 1, col: 1 },
+    { row: 1, col: 2 },
+    { row: 2, col: 2 },
+    { row: 3, col: 2 },
+    { row: 3, col: 3 },
+    { row: 3, col: 4 },
+    { row: 3, col: 5 },
+    { row: 4, col: 5 },
+    { row: 5, col: 5 },
+    { row: 5, col: 6 },
+    { row: 5, col: 7 },
+    { row: 5, col: 8 },
+    { row: 5, col: 9 }
+  ],
+  spiral: [
+    { row: 3, col: 0 },
+    { row: 3, col: 1 },
+    { row: 3, col: 2 },
+    { row: 2, col: 2 },
+    { row: 1, col: 2 },
+    { row: 1, col: 3 },
+    { row: 1, col: 4 },
+    { row: 2, col: 4 },
+    { row: 3, col: 4 },
+    { row: 4, col: 4 },
+    { row: 5, col: 4 },
+    { row: 5, col: 5 },
+    { row: 5, col: 6 },
+    { row: 5, col: 7 },
+    { row: 5, col: 8 },
+    { row: 5, col: 9 }
+  ]
+};
+
+let PATH = MAPS.classic; // Default map
 
 // Persistent cell elements so we don't recreate them every frame
 const cellElements = []; // populated by createBattleGrid()
@@ -160,11 +231,24 @@ function initCells(){
 // Initialize with starter pets
 function initStarterPets(){
   if(state.ownedPets.length === 0){
-    // Give player 2 basic pets to start
-    state.ownedPets.push(
-      { ...PET_DEFENDERS[0], uniqueId: Date.now() + '_1' },
-      { ...PET_DEFENDERS[1], uniqueId: Date.now() + '_2' }
-    );
+    // Give player 2 basic pets to start with kg system
+    const pet1 = { ...PET_DEFENDERS[0], uniqueId: Date.now() + '_1' };
+    const pet2 = { ...PET_DEFENDERS[1], uniqueId: Date.now() + '_2' };
+    
+    // Add kg to starter pets
+    pet1.kg = generatePetKg('common');
+    pet1.kgBonus = getKgBonus(pet1.kg, 'common');
+    pet1.damage = Math.floor(pet1.damage * pet1.kgBonus);
+    pet1.range = pet1.range * pet1.kgBonus;
+    pet1.attackSpeed = pet1.attackSpeed / Math.sqrt(pet1.kgBonus);
+    
+    pet2.kg = generatePetKg('common');
+    pet2.kgBonus = getKgBonus(pet2.kg, 'common');
+    pet2.damage = Math.floor(pet2.damage * pet2.kgBonus);
+    pet2.range = pet2.range * pet2.kgBonus;
+    pet2.attackSpeed = pet2.attackSpeed / Math.sqrt(pet2.kgBonus);
+    
+    state.ownedPets.push(pet1, pet2);
   }
 }
 
@@ -226,6 +310,35 @@ function getCellCenter(row, col){
 }
 
 /* --- Gacha System --- */
+// Generate random weight (kg) for pet - affects stats and visual size
+function generatePetKg(rarity){
+  let baseKg, variance;
+  switch(rarity){
+    case 'common': baseKg = 10; variance = 5; break;
+    case 'rare': baseKg = 20; variance = 10; break;
+    case 'epic': baseKg = 40; variance = 20; break;
+    case 'legendary': baseKg = 80; variance = 40; break;
+    default: baseKg = 10; variance = 5;
+  }
+  
+  // Random weight with slight bias toward higher values for rare pets
+  const kg = baseKg + (Math.random() * variance * 2) - variance;
+  return Math.max(5, Math.round(kg)); // Minimum 5kg
+}
+
+// Calculate stat bonus based on kg
+function getKgBonus(kg, rarity){
+  let multiplier;
+  switch(rarity){
+    case 'common': multiplier = kg / 10; break;
+    case 'rare': multiplier = kg / 20; break;
+    case 'epic': multiplier = kg / 40; break;
+    case 'legendary': multiplier = kg / 80; break;
+    default: multiplier = 1;
+  }
+  return Math.max(0.8, Math.min(1.5, multiplier)); // 80% to 150% stats
+}
+
 function rollGacha(){
   const roll = Math.random();
   let cumulative = 0;
@@ -243,9 +356,18 @@ function rollGacha(){
   const pool = PET_DEFENDERS.filter(p => p.rarity === rarity);
   const pet = pool[Math.floor(Math.random() * pool.length)];
   
+  // Generate weight and apply bonuses
+  const kg = generatePetKg(rarity);
+  const kgBonus = getKgBonus(kg, rarity);
+  
   return {
     ...pet,
-    uniqueId: Date.now() + '_' + Math.random()
+    uniqueId: Date.now() + '_' + Math.random(),
+    kg: kg,
+    kgBonus: kgBonus,
+    damage: Math.floor(pet.damage * kgBonus),
+    range: pet.range * kgBonus,
+    attackSpeed: pet.attackSpeed / Math.sqrt(kgBonus) // Better pets attack slightly faster
   };
 }
 
@@ -259,7 +381,12 @@ function openGacha(){
   const newPet = rollGacha();
   state.ownedPets.push(newPet);
   
+  // Track gacha rolls
+  if(!state.stats) state.stats = {};
+  state.stats.gachaRolls = (state.stats.gachaRolls || 0) + 1;
+  
   // Show result
+  const kgQuality = newPet.kgBonus > 1.2 ? '⭐ HEAVY!' : newPet.kgBonus < 0.9 ? '⚠️ Light' : '✓ Normal';
   gachaResult.innerHTML = `
     <div class="gacha-reveal ${newPet.rarity}">
       <div class="gacha-emoji">${newPet.emoji}</div>
@@ -267,9 +394,11 @@ function openGacha(){
       <div class="rarity-badge ${newPet.rarity}">${newPet.rarity.toUpperCase()}</div>
       <p>${newPet.description}</p>
       <div class="stats">
-        <div>💪 Damage: ${newPet.damage}</div>
-        <div>📏 Range: ${newPet.range}</div>
-        <div>⚡ Speed: ${newPet.attackSpeed}s</div>
+        <div>💪 Damage: ${Math.floor(newPet.damage)}</div>
+        <div>📏 Range: ${newPet.range.toFixed(1)}</div>
+        <div>⚡ Speed: ${newPet.attackSpeed.toFixed(2)}s</div>
+        <div>⚖️ Weight: ${newPet.kg}kg ${kgQuality}</div>
+        <div style="font-size:0.85rem;color:#aaa;margin-top:4px">Stats: ${Math.round(newPet.kgBonus * 100)}%</div>
       </div>
     </div>
   `;
@@ -294,18 +423,21 @@ function spawnWave(){
   const waveEnemies = [];
   
   for(let i = 0; i < baseEnemies; i++){
-    // Select enemy type based on wave
+    // Select enemy type based on wave - progressive difficulty
     let enemyType;
+    const availableTypes = ENEMY_TYPES.slice(0, Math.min(ENEMY_TYPES.length, 3 + Math.floor(state.wave / 2)));
+    
     if(state.wave <= 2){
-      enemyType = ENEMY_TYPES[0]; // Slimes
+      enemyType = availableTypes[0]; // Only basic enemies
     } else if(state.wave <= 5){
-      enemyType = Math.random() < 0.7 ? ENEMY_TYPES[0] : ENEMY_TYPES[1];
+      enemyType = availableTypes[Math.floor(Math.random() * Math.min(3, availableTypes.length))];
     } else if(state.wave <= 10){
-      const r = Math.random();
-      enemyType = r < 0.4 ? ENEMY_TYPES[0] : r < 0.8 ? ENEMY_TYPES[1] : ENEMY_TYPES[2];
+      enemyType = availableTypes[Math.floor(Math.random() * Math.min(5, availableTypes.length))];
+    } else if(state.wave <= 15){
+      enemyType = availableTypes[Math.floor(Math.random() * Math.min(8, availableTypes.length))];
     } else {
-      const r = Math.random();
-      enemyType = r < 0.3 ? ENEMY_TYPES[0] : r < 0.6 ? ENEMY_TYPES[1] : r < 0.9 ? ENEMY_TYPES[2] : ENEMY_TYPES[3];
+      // High waves can spawn any enemy type
+      enemyType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
     }
     
     waveEnemies.push({
@@ -392,6 +524,13 @@ function completeWave(){
   const gemReward = 10 + Math.floor(state.wave / 2);
   state.coins += coinReward;
   state.gems += gemReward;
+  
+  // Track statistics
+  if(!state.stats) state.stats = {};
+  state.stats.wavesCompleted = (state.stats.wavesCompleted || 0) + 1;
+  state.stats.highestWave = Math.max(state.stats.highestWave || 1, state.wave);
+  state.stats.totalCoinsEarned = (state.stats.totalCoinsEarned || 0) + coinReward;
+  state.stats.totalGemsEarned = (state.stats.totalGemsEarned || 0) + gemReward;
   
   log(`✅ Wave completed! +${coinReward} coins, +${gemReward} gems`);
   
@@ -551,7 +690,7 @@ function createProjectile(defender, enemy){
     y: defenderPos.y,
     targetEnemy: enemy,
     damage: defender.damage,
-    speed: 8, // cells per second - increased for better tracking
+    speed: 3, // cells per second - slower for better visibility
     defenderName: defender.name,
     ability: defender.ability || null // Add ability support
   };
@@ -573,7 +712,7 @@ function createProjectile(defender, enemy){
         y: defenderPos.y,
         targetEnemy: additionalEnemy,
         damage: Math.floor(defender.damage * 0.5), // Reduced damage for additional projectiles
-        speed: 8,
+        speed: 3, // Match main projectile speed
         defenderName: defender.name,
         ability: null // Additional projectiles don't trigger abilities
       };
@@ -606,6 +745,10 @@ function updateProjectiles(deltaTime){
       // Apply damage
       proj.targetEnemy.hp -= proj.damage;
       
+      // Track damage dealt
+      if(!state.stats) state.stats = {};
+      state.stats.totalDamageDealt = (state.stats.totalDamageDealt || 0) + proj.damage;
+      
       // Apply special abilities
       if(proj.ability){
         applyAbility(proj.ability, proj.targetEnemy, proj.damage, proj.x, proj.y);
@@ -615,6 +758,11 @@ function updateProjectiles(deltaTime){
         log(`💥 ${proj.defenderName} defeated ${proj.targetEnemy.name} (+${proj.targetEnemy.reward} coins, +${proj.targetEnemy.gems} gems)`);
         state.coins += (proj.targetEnemy.reward || 0);
         state.gems += (proj.targetEnemy.gems || 0);
+        
+        // Track statistics
+        state.stats.totalEnemiesDefeated = (state.stats.totalEnemiesDefeated || 0) + 1;
+        state.stats.totalCoinsEarned = (state.stats.totalCoinsEarned || 0) + (proj.targetEnemy.reward || 0);
+        state.stats.totalGemsEarned = (state.stats.totalGemsEarned || 0) + (proj.targetEnemy.gems || 0);
       }
       toRemove.push(proj.id);
     } else {
@@ -720,13 +868,21 @@ function updateBattleGrid() {
       const sellValue = Math.floor(((cell.defender.cost || 50) + (cell.defender.totalCost || 0)) * 0.7);
       const abilityIcon = cell.defender.ability ? getAbilityIcon(cell.defender.ability) : '';
       
+      // Calculate visual size based on kg
+      const kgScale = cell.defender.kg ? 1 + (cell.defender.kgBonus - 1) * 0.5 : 1; // Scale emoji size
+      const kgInfo = cell.defender.kg ? `<div class="info-line">⚖️ ${cell.defender.kg}kg</div>` : '';
+      const rarityColors = {common: '#95a5a6', rare: '#3498db', epic: '#9b59b6', legendary: '#f39c12'};
+      const rarityColor = rarityColors[cell.defender.rarity] || '#95a5a6';
+      
       el.innerHTML = `
-        <div class="defender">${cell.defender.emoji}</div>
+        <div class="defender" style="font-size: ${32 * kgScale}px; filter: drop-shadow(0 0 4px ${rarityColor})">${cell.defender.emoji}</div>
         ${levelBadge}
         <div class="defender-info">
+          <div class="info-line" style="color:${rarityColor}">${cell.defender.rarity.toUpperCase()}</div>
           <div class="info-line">💪 ${Math.floor(cell.defender.damage)}</div>
           <div class="info-line">📏 ${cell.defender.range.toFixed(1)}</div>
           <div class="info-line">⚡ ${cell.defender.attackSpeed.toFixed(2)}s</div>
+          ${kgInfo}
           ${abilityIcon ? `<div class="info-line">${abilityIcon} ${getAbilityName(cell.defender.ability)}</div>` : ''}
         </div>
         <div class="defender-controls">
@@ -868,13 +1024,16 @@ function renderInventory(){
       div.classList.add('selected');
     }
     const abilityIcon = pet.ability ? getAbilityIcon(pet.ability) : '';
+    const kgScale = pet.kg ? 1 + (pet.kgBonus - 1) * 0.5 : 1;
+    const kgDisplay = pet.kg ? ` ⚖️${pet.kg}kg` : '';
     div.innerHTML = `
-      <div class="inv-emoji">${pet.emoji}</div>
+      <div class="inv-emoji" style="font-size: ${32 * kgScale}px">${pet.emoji}</div>
       <div class="inv-name">${pet.name}</div>
-      <div class="inv-stats">💪${pet.damage} 📏${pet.range}${abilityIcon ? ' ' + abilityIcon : ''}</div>
+      <div class="inv-stats">💪${Math.floor(pet.damage)} 📏${pet.range.toFixed(1)}${abilityIcon ? ' ' + abilityIcon : ''}${kgDisplay}</div>
     `;
     const abilityText = pet.ability ? `\nAbility: ${getAbilityName(pet.ability)}` : '';
-    div.title = `${pet.description}\nDamage: ${pet.damage}, Range: ${pet.range}, Speed: ${pet.attackSpeed}s${abilityText}\nClick to select for deployment`;
+    const kgText = pet.kg ? `\nWeight: ${pet.kg}kg (${Math.round(pet.kgBonus * 100)}% stats)` : '';
+    div.title = `${pet.description}\nDamage: ${Math.floor(pet.damage)}, Range: ${pet.range.toFixed(1)}, Speed: ${pet.attackSpeed.toFixed(2)}s${kgText}${abilityText}\nClick to select for deployment`;
     // stable event listener; recreating inventory is OK on selection changes,
     // but we use addEventListener to avoid accidental overwrite if desired
     div.addEventListener('click', () => {
@@ -1054,25 +1213,92 @@ function placeDefender(cellIdx){
   updateShopAndInventory();
 }
 
+// Display statistics modal
+function showStats(){
+  const statsModal = document.getElementById('statsModal');
+  const statsDisplay = document.getElementById('statsDisplay');
+  
+  if(!state.stats) state.stats = {};
+  
+  statsDisplay.innerHTML = `
+    <div style="text-align:left;line-height:1.8">
+      <div>🏆 Highest Wave: <strong>${state.stats.highestWave || state.wave}</strong></div>
+      <div>✅ Waves Completed: <strong>${state.stats.wavesCompleted || 0}</strong></div>
+      <div>💀 Enemies Defeated: <strong>${state.stats.totalEnemiesDefeated || 0}</strong></div>
+      <div>💥 Total Damage Dealt: <strong>${Math.floor(state.stats.totalDamageDealt || 0)}</strong></div>
+      <div>💰 Total Coins Earned: <strong>${state.stats.totalCoinsEarned || 0}</strong></div>
+      <div>💎 Total Gems Earned: <strong>${state.stats.totalGemsEarned || 0}</strong></div>
+      <div>🎲 Gacha Rolls: <strong>${state.stats.gachaRolls || 0}</strong></div>
+      <div>🐾 Pets Owned: <strong>${state.ownedPets.length}</strong></div>
+      <div>🛡️ Defenders Placed: <strong>${state.defenders.length}</strong></div>
+    </div>
+  `;
+  
+  statsModal.classList.remove('hidden');
+}
+
 /* --- Event Handlers --- */
 startWaveBtn.addEventListener('click', () => spawnWave());
 gachaBtn.addEventListener('click', () => openGacha());
 closeGachaBtn.addEventListener('click', () => gachaModal.classList.add('hidden'));
 
+const statsBtn = document.getElementById('statsBtn');
+const statsModal = document.getElementById('statsModal');
+const closeStatsBtn = document.getElementById('closeStatsBtn');
+if(statsBtn) statsBtn.addEventListener('click', () => showStats());
+if(closeStatsBtn) closeStatsBtn.addEventListener('click', () => statsModal.classList.add('hidden'));
+
+// Map selector
+const mapSelector = document.getElementById('mapSelector');
+mapSelector.addEventListener('change', (e) => {
+  if(state.isWaveActive){
+    alert('Cannot change map during active wave!');
+    mapSelector.value = state.selectedMap;
+    return;
+  }
+  
+  if(state.defenders.length > 0){
+    const confirm = window.confirm('Changing map will remove all placed defenders. Continue?');
+    if(!confirm){
+      mapSelector.value = state.selectedMap;
+      return;
+    }
+    // Clear defenders
+    state.defenders = [];
+    state.cells.forEach(cell => cell.defender = null);
+  }
+  
+  state.selectedMap = e.target.value;
+  PATH = MAPS[state.selectedMap];
+  initCells();
+  createBattleGrid();
+  updateUI();
+  log(`🗺️ Map changed to ${state.selectedMap}!`);
+  save();
+});
+
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
   // Space or Enter to start wave
-  if((e.key === ' ' || e.key === 'Enter') && !state.isWaveActive && gachaModal.classList.contains('hidden')){
+  if((e.key === ' ' || e.key === 'Enter') && !state.isWaveActive && gachaModal.classList.contains('hidden') && statsModal.classList.contains('hidden')){
     e.preventDefault();
     spawnWave();
   }
   // G for gacha
-  if(e.key === 'g' || e.key === 'G'){
+  if((e.key === 'g' || e.key === 'G') && statsModal.classList.contains('hidden')){
     openGacha();
   }
-  // Escape to close modal
-  if(e.key === 'Escape' && !gachaModal.classList.contains('hidden')){
-    gachaModal.classList.add('hidden');
+  // S for stats
+  if((e.key === 's' || e.key === 'S') && gachaModal.classList.contains('hidden') && statsModal.classList.contains('hidden')){
+    showStats();
+  }
+  // Escape to close modals
+  if(e.key === 'Escape'){
+    if(!gachaModal.classList.contains('hidden')){
+      gachaModal.classList.add('hidden');
+    } else if(!statsModal.classList.contains('hidden')){
+      statsModal.classList.add('hidden');
+    }
   }
 });
 
@@ -1107,6 +1333,20 @@ function gameLoop(){
 function init(){
   load();
   
+  // Set defaults
+  if(state.coins === undefined) state.coins = STARTING_COINS;
+  if(state.gems === undefined) state.gems = STARTING_GEMS;
+  if(state.lives === undefined) state.lives = STARTING_LIVES;
+  if(state.wave === undefined) state.wave = 1;
+  if(state.selectedMap === undefined) state.selectedMap = 'classic';
+  
+  // Set the path based on selected map
+  PATH = MAPS[state.selectedMap];
+  
+  // Update map selector
+  const mapSelector = document.getElementById('mapSelector');
+  if(mapSelector) mapSelector.value = state.selectedMap;
+  
   // Initialize grid
   if(!state.cells || state.cells.length === 0){
     initCells();
@@ -1133,12 +1373,6 @@ function init(){
   
   // Initialize starter pets
   initStarterPets();
-  
-  // Set defaults
-  if(state.coins === undefined) state.coins = STARTING_COINS;
-  if(state.gems === undefined) state.gems = STARTING_GEMS;
-  if(state.lives === undefined) state.lives = STARTING_LIVES;
-  if(state.wave === undefined) state.wave = 1;
   
   updateUI();
   updateShopAndInventory();
