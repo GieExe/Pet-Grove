@@ -23,6 +23,7 @@
         <!-- JS inserts defender pets -->
       </div>
       <button id="gachaBtn" class="gacha-button">🎲 Pet Gacha (40 gems)</button>
+      <button id="statsBtn" class="stats-button">📊 Statistics</button>
     </section>
 
     <section id="battleSection">
@@ -63,11 +64,20 @@
       <button id="closeGachaBtn">Close</button>
     </div>
   </div>
+  
+  <!-- Stats Modal -->
+  <div id="statsModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>📊 Game Statistics</h2>
+      <div id="statsDisplay"></div>
+      <button id="closeStatsBtn">Close</button>
+    </div>
+  </div>
 
   <footer>
     <small>Pet Defense — Deploy pets to defend against waves of enemies! Progress saves automatically.</small>
     <small style="display:block;margin-top:8px;color:#888;">
-      💡 Hover over defenders to see stats and controls | ⬆️ Upgrade | 🔄 Move | 💰 Sell | Shortcuts: Space/Enter=Start Wave, G=Gacha, Esc=Close
+      💡 Hover over defenders to see stats and controls | ⬆️ Upgrade | 🔄 Move | 💰 Sell | Shortcuts: Space/Enter=Start Wave, G=Gacha, S=Stats, Esc=Close
     </small>
   </footer>
 

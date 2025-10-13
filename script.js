@@ -144,7 +144,16 @@ let state = {
   selectedDefender: null,
   enemyIdCounter: 0,
   lastTick: Date.now(),
-  selectedMap: 'classic' // Current map selection
+  selectedMap: 'classic', // Current map selection
+  stats: { // Game statistics
+    totalEnemiesDefeated: 0,
+    totalDamageDealt: 0,
+    wavesCompleted: 0,
+    gachaRolls: 0,
+    highestWave: 1,
+    totalCoinsEarned: 0,
+    totalGemsEarned: 0
+  }
 };
 
 // Path definition - enemies follow this path (optimized for more tower placement)
@@ -372,6 +381,10 @@ function openGacha(){
   const newPet = rollGacha();
   state.ownedPets.push(newPet);
   
+  // Track gacha rolls
+  if(!state.stats) state.stats = {};
+  state.stats.gachaRolls = (state.stats.gachaRolls || 0) + 1;
+  
   // Show result
   const kgQuality = newPet.kgBonus > 1.2 ? '⭐ HEAVY!' : newPet.kgBonus < 0.9 ? '⚠️ Light' : '✓ Normal';
   gachaResult.innerHTML = `
@@ -410,18 +423,21 @@ function spawnWave(){
   const waveEnemies = [];
   
   for(let i = 0; i < baseEnemies; i++){
-    // Select enemy type based on wave
+    // Select enemy type based on wave - progressive difficulty
     let enemyType;
+    const availableTypes = ENEMY_TYPES.slice(0, Math.min(ENEMY_TYPES.length, 3 + Math.floor(state.wave / 2)));
+    
     if(state.wave <= 2){
-      enemyType = ENEMY_TYPES[0]; // Slimes
+      enemyType = availableTypes[0]; // Only basic enemies
     } else if(state.wave <= 5){
-      enemyType = Math.random() < 0.7 ? ENEMY_TYPES[0] : ENEMY_TYPES[1];
+      enemyType = availableTypes[Math.floor(Math.random() * Math.min(3, availableTypes.length))];
     } else if(state.wave <= 10){
-      const r = Math.random();
-      enemyType = r < 0.4 ? ENEMY_TYPES[0] : r < 0.8 ? ENEMY_TYPES[1] : ENEMY_TYPES[2];
+      enemyType = availableTypes[Math.floor(Math.random() * Math.min(5, availableTypes.length))];
+    } else if(state.wave <= 15){
+      enemyType = availableTypes[Math.floor(Math.random() * Math.min(8, availableTypes.length))];
     } else {
-      const r = Math.random();
-      enemyType = r < 0.3 ? ENEMY_TYPES[0] : r < 0.6 ? ENEMY_TYPES[1] : r < 0.9 ? ENEMY_TYPES[2] : ENEMY_TYPES[3];
+      // High waves can spawn any enemy type
+      enemyType = availableTypes[Math.floor(Math.random() * availableTypes.length)];
     }
     
     waveEnemies.push({
@@ -508,6 +524,13 @@ function completeWave(){
   const gemReward = 10 + Math.floor(state.wave / 2);
   state.coins += coinReward;
   state.gems += gemReward;
+  
+  // Track statistics
+  if(!state.stats) state.stats = {};
+  state.stats.wavesCompleted = (state.stats.wavesCompleted || 0) + 1;
+  state.stats.highestWave = Math.max(state.stats.highestWave || 1, state.wave);
+  state.stats.totalCoinsEarned = (state.stats.totalCoinsEarned || 0) + coinReward;
+  state.stats.totalGemsEarned = (state.stats.totalGemsEarned || 0) + gemReward;
   
   log(`✅ Wave completed! +${coinReward} coins, +${gemReward} gems`);
   
@@ -722,6 +745,10 @@ function updateProjectiles(deltaTime){
       // Apply damage
       proj.targetEnemy.hp -= proj.damage;
       
+      // Track damage dealt
+      if(!state.stats) state.stats = {};
+      state.stats.totalDamageDealt = (state.stats.totalDamageDealt || 0) + proj.damage;
+      
       // Apply special abilities
       if(proj.ability){
         applyAbility(proj.ability, proj.targetEnemy, proj.damage, proj.x, proj.y);
@@ -731,6 +758,11 @@ function updateProjectiles(deltaTime){
         log(`💥 ${proj.defenderName} defeated ${proj.targetEnemy.name} (+${proj.targetEnemy.reward} coins, +${proj.targetEnemy.gems} gems)`);
         state.coins += (proj.targetEnemy.reward || 0);
         state.gems += (proj.targetEnemy.gems || 0);
+        
+        // Track statistics
+        state.stats.totalEnemiesDefeated = (state.stats.totalEnemiesDefeated || 0) + 1;
+        state.stats.totalCoinsEarned = (state.stats.totalCoinsEarned || 0) + (proj.targetEnemy.reward || 0);
+        state.stats.totalGemsEarned = (state.stats.totalGemsEarned || 0) + (proj.targetEnemy.gems || 0);
       }
       toRemove.push(proj.id);
     } else {
@@ -839,11 +871,14 @@ function updateBattleGrid() {
       // Calculate visual size based on kg
       const kgScale = cell.defender.kg ? 1 + (cell.defender.kgBonus - 1) * 0.5 : 1; // Scale emoji size
       const kgInfo = cell.defender.kg ? `<div class="info-line">⚖️ ${cell.defender.kg}kg</div>` : '';
+      const rarityColors = {common: '#95a5a6', rare: '#3498db', epic: '#9b59b6', legendary: '#f39c12'};
+      const rarityColor = rarityColors[cell.defender.rarity] || '#95a5a6';
       
       el.innerHTML = `
-        <div class="defender" style="font-size: ${32 * kgScale}px">${cell.defender.emoji}</div>
+        <div class="defender" style="font-size: ${32 * kgScale}px; filter: drop-shadow(0 0 4px ${rarityColor})">${cell.defender.emoji}</div>
         ${levelBadge}
         <div class="defender-info">
+          <div class="info-line" style="color:${rarityColor}">${cell.defender.rarity.toUpperCase()}</div>
           <div class="info-line">💪 ${Math.floor(cell.defender.damage)}</div>
           <div class="info-line">📏 ${cell.defender.range.toFixed(1)}</div>
           <div class="info-line">⚡ ${cell.defender.attackSpeed.toFixed(2)}s</div>
@@ -1178,10 +1213,40 @@ function placeDefender(cellIdx){
   updateShopAndInventory();
 }
 
+// Display statistics modal
+function showStats(){
+  const statsModal = document.getElementById('statsModal');
+  const statsDisplay = document.getElementById('statsDisplay');
+  
+  if(!state.stats) state.stats = {};
+  
+  statsDisplay.innerHTML = `
+    <div style="text-align:left;line-height:1.8">
+      <div>🏆 Highest Wave: <strong>${state.stats.highestWave || state.wave}</strong></div>
+      <div>✅ Waves Completed: <strong>${state.stats.wavesCompleted || 0}</strong></div>
+      <div>💀 Enemies Defeated: <strong>${state.stats.totalEnemiesDefeated || 0}</strong></div>
+      <div>💥 Total Damage Dealt: <strong>${Math.floor(state.stats.totalDamageDealt || 0)}</strong></div>
+      <div>💰 Total Coins Earned: <strong>${state.stats.totalCoinsEarned || 0}</strong></div>
+      <div>💎 Total Gems Earned: <strong>${state.stats.totalGemsEarned || 0}</strong></div>
+      <div>🎲 Gacha Rolls: <strong>${state.stats.gachaRolls || 0}</strong></div>
+      <div>🐾 Pets Owned: <strong>${state.ownedPets.length}</strong></div>
+      <div>🛡️ Defenders Placed: <strong>${state.defenders.length}</strong></div>
+    </div>
+  `;
+  
+  statsModal.classList.remove('hidden');
+}
+
 /* --- Event Handlers --- */
 startWaveBtn.addEventListener('click', () => spawnWave());
 gachaBtn.addEventListener('click', () => openGacha());
 closeGachaBtn.addEventListener('click', () => gachaModal.classList.add('hidden'));
+
+const statsBtn = document.getElementById('statsBtn');
+const statsModal = document.getElementById('statsModal');
+const closeStatsBtn = document.getElementById('closeStatsBtn');
+if(statsBtn) statsBtn.addEventListener('click', () => showStats());
+if(closeStatsBtn) closeStatsBtn.addEventListener('click', () => statsModal.classList.add('hidden'));
 
 // Map selector
 const mapSelector = document.getElementById('mapSelector');
@@ -1215,17 +1280,25 @@ mapSelector.addEventListener('change', (e) => {
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
   // Space or Enter to start wave
-  if((e.key === ' ' || e.key === 'Enter') && !state.isWaveActive && gachaModal.classList.contains('hidden')){
+  if((e.key === ' ' || e.key === 'Enter') && !state.isWaveActive && gachaModal.classList.contains('hidden') && statsModal.classList.contains('hidden')){
     e.preventDefault();
     spawnWave();
   }
   // G for gacha
-  if(e.key === 'g' || e.key === 'G'){
+  if((e.key === 'g' || e.key === 'G') && statsModal.classList.contains('hidden')){
     openGacha();
   }
-  // Escape to close modal
-  if(e.key === 'Escape' && !gachaModal.classList.contains('hidden')){
-    gachaModal.classList.add('hidden');
+  // S for stats
+  if((e.key === 's' || e.key === 'S') && gachaModal.classList.contains('hidden') && statsModal.classList.contains('hidden')){
+    showStats();
+  }
+  // Escape to close modals
+  if(e.key === 'Escape'){
+    if(!gachaModal.classList.contains('hidden')){
+      gachaModal.classList.add('hidden');
+    } else if(!statsModal.classList.contains('hidden')){
+      statsModal.classList.add('hidden');
+    }
   }
 });
 
