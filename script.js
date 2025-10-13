@@ -761,8 +761,17 @@ function renderEnemies() {
     enemyEl.className = 'enemy';
     enemyEl.style.left = `${enemy.position.col * (100 / GRID_COLS)}%`;
     enemyEl.style.top = `${enemy.position.row * (100 / GRID_ROWS)}%`;
+    
+    // Add status effect indicators
+    let statusEffects = '';
+    if(enemy.poisonStacks > 0) statusEffects += '☠️';
+    if(enemy.burnTimer) statusEffects += '🔥';
+    if(enemy.slowDuration > 0) statusEffects += '❄️';
+    if(enemy.stunned) statusEffects += '⭐';
+    
     enemyEl.innerHTML = `
       <div class="enemy-emoji">${enemy.emoji}</div>
+      ${statusEffects ? `<div class="status-effects">${statusEffects}</div>` : ''}
       <div class="enemy-hp">
         <div class="enemy-hp-bar" style="width:${(enemy.hp / enemy.maxHp) * 100}%"></div>
       </div>
@@ -776,8 +785,18 @@ function renderEnemies() {
     projEl.className = 'projectile';
     projEl.style.left = `${proj.x * (100 / GRID_COLS)}%`;
     projEl.style.top = `${proj.y * (100 / GRID_ROWS)}%`;
-    // Use different projectile emojis based on damage
-    const projectileEmoji = proj.damage >= 70 ? '🔥' : proj.damage >= 40 ? '⚡' : proj.damage >= 25 ? '✨' : '💫';
+    
+    // Use different projectile emojis based on ability or damage
+    let projectileEmoji;
+    if(proj.ability === 'poison') projectileEmoji = '☠️';
+    else if(proj.ability === 'splash') projectileEmoji = '💥';
+    else if(proj.ability === 'slow') projectileEmoji = '❄️';
+    else if(proj.ability === 'stun') projectileEmoji = '⭐';
+    else if(proj.ability === 'lifesteal') projectileEmoji = '💚';
+    else if(proj.ability === 'burn') projectileEmoji = '🔥';
+    else if(proj.ability === 'multishot') projectileEmoji = '🎯';
+    else projectileEmoji = proj.damage >= 70 ? '🔥' : proj.damage >= 40 ? '⚡' : proj.damage >= 25 ? '✨' : '💫';
+    
     projEl.innerHTML = projectileEmoji;
     enemiesContainer.appendChild(projEl);
   });
@@ -972,8 +991,9 @@ function moveDefender(cellIdx){
   cell.defender = null;
   
   // Return to inventory for redeployment
+  const basePet = PET_DEFENDERS.find(p => p.id === defender.id);
   const movingPet = {
-    ...PET_DEFENDERS.find(p => p.id === defender.id),
+    ...basePet,
     uniqueId: Date.now() + '_' + Math.random(),
     // Preserve upgrade stats if upgraded
     ...(defender.upgradeLevel > 0 ? {
