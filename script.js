@@ -58,7 +58,22 @@ const PET_DEFENDERS = [
   { id: 'leopard', emoji: '🐆', name: 'Speed Leopard', cost: 170, damage: 42, range: 2.5, attackSpeed: 0.7, rarity:'rare', description:'Lightning fast' },
   { id: 'hydra', emoji: '🐉', name: 'Hydra', cost: 310, damage: 72, range: 2.8, attackSpeed: 1.3, rarity:'epic', description:'Multi-headed beast' },
   { id: 'griffin', emoji: '🦅', name: 'Griffin', cost: 295, damage: 68, range: 3.2, attackSpeed: 1.0, rarity:'epic', description:'Mythical guardian' },
-  { id: 'cerberus', emoji: '🐺', name: 'Cerberus', cost: 305, damage: 75, range: 1.9, attackSpeed: 1.1, rarity:'epic', description:'Three-headed guardian' }
+  { id: 'cerberus', emoji: '🐺', name: 'Cerberus', cost: 305, damage: 75, range: 1.9, attackSpeed: 1.1, rarity:'epic', description:'Three-headed guardian' },
+  { id: 'snake', emoji: '🐍', name: 'Viper', cost: 85, damage: 26, range: 2.3, attackSpeed: 0.8, rarity:'common', description:'Poisonous striker', ability:'poison' },
+  { id: 'elephant', emoji: '🐘', name: 'War Elephant', cost: 175, damage: 55, range: 1.4, attackSpeed: 1.8, rarity:'rare', description:'Slow but devastating', ability:'splash' },
+  { id: 'bat', emoji: '🦇', name: 'Shadow Bat', cost: 95, damage: 30, range: 2.6, attackSpeed: 0.6, rarity:'common', description:'Swift night hunter', ability:'lifesteal' },
+  { id: 'frog', emoji: '🐸', name: 'Poison Frog', cost: 100, damage: 22, range: 2.4, attackSpeed: 0.9, rarity:'common', description:'Toxic defender', ability:'poison' },
+  { id: 'crocodile', emoji: '🐊', name: 'Croc Hunter', cost: 185, damage: 58, range: 1.6, attackSpeed: 1.5, rarity:'rare', description:'Crushing jaws', ability:'stun' },
+  { id: 'seahorse', emoji: '🐴', name: 'Swift Horse', cost: 110, damage: 33, range: 2.0, attackSpeed: 0.5, rarity:'common', description:'Lightning fast', ability:'multishot' },
+  { id: 'scorpion', emoji: '🦂', name: 'Scorpion King', cost: 195, damage: 44, range: 2.1, attackSpeed: 1.0, rarity:'rare', description:'Venomous stinger', ability:'poison' },
+  { id: 'spider', emoji: '🕷️', name: 'Giant Spider', cost: 125, damage: 35, range: 2.5, attackSpeed: 1.1, rarity:'common', description:'Web master', ability:'slow' },
+  { id: 'octopus', emoji: '🐙', name: 'Deep Octopus', cost: 200, damage: 48, range: 2.8, attackSpeed: 1.0, rarity:'rare', description:'Tentacle attacker', ability:'splash' },
+  { id: 'whale', emoji: '🐋', name: 'Sky Whale', cost: 330, damage: 78, range: 3.2, attackSpeed: 1.4, rarity:'epic', description:'Massive aerial beast', ability:'splash' },
+  { id: 'bee', emoji: '🐝', name: 'Queen Bee', cost: 115, damage: 28, range: 2.2, attackSpeed: 0.7, rarity:'common', description:'Swarm commander', ability:'multishot' },
+  { id: 'butterfly', emoji: '🦋', name: 'Mystic Butterfly', cost: 135, damage: 32, range: 3.0, attackSpeed: 0.9, rarity:'rare', description:'Magical wings', ability:'lifesteal' },
+  { id: 'crab', emoji: '🦀', name: 'Armored Crab', cost: 105, damage: 38, range: 1.3, attackSpeed: 1.4, rarity:'common', description:'Hard shell defender', ability:'stun' },
+  { id: 'flamingo', emoji: '🦩', name: 'Flame Flamingo', cost: 340, damage: 70, range: 3.3, attackSpeed: 1.2, rarity:'epic', description:'Elegant fire bird', ability:'burn' },
+  { id: 'sloth', emoji: '🦥', name: 'Battle Sloth', cost: 95, damage: 45, range: 1.5, attackSpeed: 2.0, rarity:'common', description:'Slow but mighty', ability:'stun' }
 ];
 
 const ENEMY_TYPES = [
@@ -319,8 +334,15 @@ function updateEnemies(deltaTime){
       return;
     }
     
-    // Move along path
-    enemy.progress += enemy.speed * deltaTime;
+    // Initialize original speed if not set
+    if(!enemy.originalSpeed){
+      enemy.originalSpeed = enemy.speed;
+    }
+    
+    // Move along path (unless stunned)
+    if(!enemy.stunned){
+      enemy.progress += enemy.speed * deltaTime;
+    }
     
     if(enemy.progress >= 1){
       enemy.progress = 0;
@@ -378,6 +400,117 @@ function completeWave(){
   save();
 }
 
+/* --- Ability System --- */
+function applyAbility(ability, targetEnemy, damage, x, y){
+  switch(ability){
+    case 'poison':
+      // Apply damage over time
+      if(!targetEnemy.poisonStacks) targetEnemy.poisonStacks = 0;
+      targetEnemy.poisonStacks = Math.min(targetEnemy.poisonStacks + 1, 3); // Max 3 stacks
+      if(!targetEnemy.poisonTimer){
+        targetEnemy.poisonTimer = setInterval(() => {
+          if(targetEnemy.hp > 0 && targetEnemy.poisonStacks > 0){
+            const poisonDamage = Math.floor(damage * 0.1 * targetEnemy.poisonStacks);
+            targetEnemy.hp -= poisonDamage;
+            createFloatingText(targetEnemy.position.col + 0.5, targetEnemy.position.row + 0.5, `☠️-${poisonDamage}`, '#00ff00');
+            targetEnemy.poisonStacks--;
+          } else {
+            clearInterval(targetEnemy.poisonTimer);
+            targetEnemy.poisonTimer = null;
+            targetEnemy.poisonStacks = 0;
+          }
+        }, 1000);
+      }
+      break;
+      
+    case 'splash':
+      // Damage nearby enemies
+      state.enemies.forEach(enemy => {
+        if(enemy === targetEnemy || enemy.spawnDelay > 0) return;
+        const enemyPos = { x: enemy.position.col + 0.5, y: enemy.position.row + 0.5 };
+        const dist = distance(x, y, enemyPos.x, enemyPos.y);
+        if(dist < 1.5){ // Splash radius
+          const splashDamage = Math.floor(damage * 0.4);
+          enemy.hp -= splashDamage;
+          createFloatingText(enemy.position.col + 0.5, enemy.position.row + 0.5, `-${splashDamage}`, '#ff9900');
+        }
+      });
+      break;
+      
+    case 'slow':
+      // Slow enemy movement
+      if(!targetEnemy.slowDuration){
+        targetEnemy.originalSpeed = targetEnemy.speed;
+      }
+      targetEnemy.speed = targetEnemy.originalSpeed * 0.5;
+      targetEnemy.slowDuration = 3; // 3 seconds
+      setTimeout(() => {
+        if(targetEnemy.slowDuration){
+          targetEnemy.slowDuration--;
+          if(targetEnemy.slowDuration === 0){
+            targetEnemy.speed = targetEnemy.originalSpeed;
+          }
+        }
+      }, 1000);
+      break;
+      
+    case 'stun':
+      // Stun enemy briefly (20% chance)
+      if(Math.random() < 0.2){
+        targetEnemy.stunned = true;
+        targetEnemy.originalSpeed = targetEnemy.speed;
+        targetEnemy.speed = 0;
+        createFloatingText(targetEnemy.position.col + 0.5, targetEnemy.position.row + 0.5, '⭐STUN', '#ffff00');
+        setTimeout(() => {
+          targetEnemy.stunned = false;
+          targetEnemy.speed = targetEnemy.originalSpeed;
+        }, 1500);
+      }
+      break;
+      
+    case 'lifesteal':
+      // Heal the tower (not implemented as towers don't have HP, but give bonus coins)
+      const heal = Math.floor(damage * 0.15);
+      state.coins += heal;
+      createFloatingText(x, y, `+${heal}💰`, '#00ff00');
+      break;
+      
+    case 'burn':
+      // Apply burning damage over time
+      if(!targetEnemy.burnTimer){
+        let burnTicks = 5;
+        targetEnemy.burnTimer = setInterval(() => {
+          if(targetEnemy.hp > 0 && burnTicks > 0){
+            const burnDamage = Math.floor(damage * 0.15);
+            targetEnemy.hp -= burnDamage;
+            createFloatingText(targetEnemy.position.col + 0.5, targetEnemy.position.row + 0.5, `🔥-${burnDamage}`, '#ff4400');
+            burnTicks--;
+          } else {
+            clearInterval(targetEnemy.burnTimer);
+            targetEnemy.burnTimer = null;
+          }
+        }, 800);
+      }
+      break;
+  }
+}
+
+// Create floating damage/effect text
+function createFloatingText(x, y, text, color){
+  const enemiesContainer = document.getElementById('enemiesContainer');
+  if(!enemiesContainer) return;
+  
+  const floatText = document.createElement('div');
+  floatText.className = 'floating-text';
+  floatText.style.left = `${x * (100 / GRID_COLS)}%`;
+  floatText.style.top = `${y * (100 / GRID_ROWS)}%`;
+  floatText.style.color = color;
+  floatText.textContent = text;
+  enemiesContainer.appendChild(floatText);
+  
+  setTimeout(() => floatText.remove(), 1000);
+}
+
 /* --- Defender/Tower System --- */
 function updateDefenders(deltaTime){
   // Simple defender targeting & attack logic
@@ -419,9 +552,34 @@ function createProjectile(defender, enemy){
     targetEnemy: enemy,
     damage: defender.damage,
     speed: 8, // cells per second - increased for better tracking
-    defenderName: defender.name
+    defenderName: defender.name,
+    ability: defender.ability || null // Add ability support
   };
   state.projectiles.push(projectile);
+  
+  // Multishot ability - create additional projectiles
+  if(defender.ability === 'multishot'){
+    const nearbyEnemies = state.enemies.filter(e => {
+      if(e.spawnDelay > 0 || e === enemy) return false;
+      const enemyCenter = { x: e.position.col + 0.5, y: e.position.row + 0.5 };
+      const defenderCenter = getCellCenter(defender.row, defender.col);
+      return distance(defenderCenter.x, defenderCenter.y, enemyCenter.x, enemyCenter.y) <= defender.range;
+    }).slice(0, 2); // Up to 2 additional targets
+    
+    nearbyEnemies.forEach(additionalEnemy => {
+      const additionalProj = {
+        id: Date.now() + Math.random(),
+        x: defenderPos.x,
+        y: defenderPos.y,
+        targetEnemy: additionalEnemy,
+        damage: Math.floor(defender.damage * 0.5), // Reduced damage for additional projectiles
+        speed: 8,
+        defenderName: defender.name,
+        ability: null // Additional projectiles don't trigger abilities
+      };
+      state.projectiles.push(additionalProj);
+    });
+  }
 }
 
 // Update projectiles - improved accuracy with predictive targeting
@@ -445,7 +603,14 @@ function updateProjectiles(deltaTime){
       // Hit the target - create impact effect
       createImpactEffect(proj.x, proj.y);
       
+      // Apply damage
       proj.targetEnemy.hp -= proj.damage;
+      
+      // Apply special abilities
+      if(proj.ability){
+        applyAbility(proj.ability, proj.targetEnemy, proj.damage, proj.x, proj.y);
+      }
+      
       if(proj.targetEnemy.hp <= 0){
         log(`💥 ${proj.defenderName} defeated ${proj.targetEnemy.name} (+${proj.targetEnemy.reward} coins, +${proj.targetEnemy.gems} gems)`);
         state.coins += (proj.targetEnemy.reward || 0);
@@ -553,6 +718,7 @@ function updateBattleGrid() {
       const levelBadge = upgradeLevel > 0 ? `<span class="upgrade-badge">+${upgradeLevel}</span>` : '';
       const upgradeCost = Math.floor((cell.defender.cost || 50) * 0.5 * (upgradeLevel + 1));
       const sellValue = Math.floor(((cell.defender.cost || 50) + (cell.defender.totalCost || 0)) * 0.7);
+      const abilityIcon = cell.defender.ability ? getAbilityIcon(cell.defender.ability) : '';
       
       el.innerHTML = `
         <div class="defender">${cell.defender.emoji}</div>
@@ -561,6 +727,7 @@ function updateBattleGrid() {
           <div class="info-line">💪 ${Math.floor(cell.defender.damage)}</div>
           <div class="info-line">📏 ${cell.defender.range.toFixed(1)}</div>
           <div class="info-line">⚡ ${cell.defender.attackSpeed.toFixed(2)}s</div>
+          ${abilityIcon ? `<div class="info-line">${abilityIcon} ${getAbilityName(cell.defender.ability)}</div>` : ''}
         </div>
         <div class="defender-controls">
           <button class="control-btn upgrade-btn" onclick="upgradeDefender(${idx})" title="Upgrade (+20% stats for ${upgradeCost} coins)">⬆️</button>
@@ -616,6 +783,33 @@ function renderEnemies() {
   });
 }
 
+/* --- Ability Helper Functions --- */
+function getAbilityIcon(ability){
+  const icons = {
+    poison: '☠️',
+    splash: '💥',
+    slow: '❄️',
+    stun: '⭐',
+    lifesteal: '💚',
+    burn: '🔥',
+    multishot: '🎯'
+  };
+  return icons[ability] || '';
+}
+
+function getAbilityName(ability){
+  const names = {
+    poison: 'Poison',
+    splash: 'Splash Damage',
+    slow: 'Slow',
+    stun: 'Stun',
+    lifesteal: 'Life Steal',
+    burn: 'Burn',
+    multishot: 'Multi-Shot'
+  };
+  return names[ability] || '';
+}
+
 /* --- Shop/Inventory Rendering --- */
 function renderShop(){
   shopEl.innerHTML = '';
@@ -654,12 +848,14 @@ function renderInventory(){
     if(state.selectedDefender && state.selectedDefender.uniqueId === pet.uniqueId){
       div.classList.add('selected');
     }
+    const abilityIcon = pet.ability ? getAbilityIcon(pet.ability) : '';
     div.innerHTML = `
       <div class="inv-emoji">${pet.emoji}</div>
       <div class="inv-name">${pet.name}</div>
-      <div class="inv-stats">💪${pet.damage} 📏${pet.range}</div>
+      <div class="inv-stats">💪${pet.damage} 📏${pet.range}${abilityIcon ? ' ' + abilityIcon : ''}</div>
     `;
-    div.title = `${pet.description}\nDamage: ${pet.damage}, Range: ${pet.range}, Speed: ${pet.attackSpeed}s\nClick to select for deployment`;
+    const abilityText = pet.ability ? `\nAbility: ${getAbilityName(pet.ability)}` : '';
+    div.title = `${pet.description}\nDamage: ${pet.damage}, Range: ${pet.range}, Speed: ${pet.attackSpeed}s${abilityText}\nClick to select for deployment`;
     // stable event listener; recreating inventory is OK on selection changes,
     // but we use addEventListener to avoid accidental overwrite if desired
     div.addEventListener('click', () => {

@@ -4,18 +4,20 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 
 ## Features
 - 🛡️ **Tower Defense Gameplay** - Deploy pets strategically to defend against enemy waves
-- 🐾 **Multiple Pet Defenders** - 28 unique pets with different stats, rarities, and abilities
+- 🐾 **Multiple Pet Defenders** - 43+ unique pets with different stats, rarities, and abilities
+- ✨ **Special Abilities** - Poison, Splash, Slow, Stun, Lifesteal, Burn, and Multi-Shot abilities
 - 💰 **Dual Currency System** - Earn coins from battles and gems from wave completion
 - 🎲 **Gacha System** - Pull for new pets with rarity tiers (Common, Rare, Epic, Legendary)
 - 🌊 **Wave-Based Combat** - Face increasingly difficult waves with varied enemy types
-- ⚔️ **Real-Time Combat** - Watch your pets automatically attack enemies in range with enhanced projectile effects
-- 📊 **Strategic Depth** - Balance pet placement, range, damage, and attack speed
+- ⚔️ **Real-Time Combat** - Watch your pets automatically attack enemies in range with smooth projectile effects
+- 📊 **Strategic Depth** - Balance pet placement, range, damage, attack speed, and abilities
 - 💎 **Rarity System** - Collect pets from common to legendary with different power levels
 - 💾 **Auto-Save** - Progress automatically saves to `localStorage`
 - 🎨 **Dark Theme UI** - Modern, polished design with smooth animations
 - 🐛 **Stable Hover Effects** - Smooth, non-flickering hover animations on all interactive elements
-- 💥 **Enhanced Projectiles** - Spinning projectiles with glow effects and impact animations
+- 💥 **Smooth Projectiles** - Glowing projectiles that smoothly track enemies with impact animations
 - ⚠️ **Permanent Sale** - Sold pets are gone forever (with confirmation dialog)
+- 🗺️ **Clear Path Indicators** - Visual arrows show enemy path direction
 
 ## How to Play
 1. Open `index.html` in a modern browser
@@ -75,6 +77,30 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 | 🦄 Unicorn | Legendary | 80 | 2.8 | 0.7s | Magical powerhouse |
 | 🦖 T-Rex | Legendary | 100 | 1.6 | 1.2s | Prehistoric destroyer |
 | 🐙 Kraken | Legendary | 85 | 3.0 | 0.9s | Tentacled terror |
+| 🐍 Viper | Common | 26 | 2.3 | 0.8s | Poisonous striker (☠️ Poison) |
+| 🐘 War Elephant | Rare | 55 | 1.4 | 1.8s | Slow but devastating (💥 Splash) |
+| 🦇 Shadow Bat | Common | 30 | 2.6 | 0.6s | Swift night hunter (💚 Lifesteal) |
+| 🐸 Poison Frog | Common | 22 | 2.4 | 0.9s | Toxic defender (☠️ Poison) |
+| 🐊 Croc Hunter | Rare | 58 | 1.6 | 1.5s | Crushing jaws (⭐ Stun) |
+| 🐴 Swift Horse | Common | 33 | 2.0 | 0.5s | Lightning fast (🎯 Multi-Shot) |
+| 🦂 Scorpion King | Rare | 44 | 2.1 | 1.0s | Venomous stinger (☠️ Poison) |
+| 🕷️ Giant Spider | Common | 35 | 2.5 | 1.1s | Web master (❄️ Slow) |
+| 🐙 Deep Octopus | Rare | 48 | 2.8 | 1.0s | Tentacle attacker (💥 Splash) |
+| 🐋 Sky Whale | Epic | 78 | 3.2 | 1.4s | Massive aerial beast (💥 Splash) |
+| 🐝 Queen Bee | Common | 28 | 2.2 | 0.7s | Swarm commander (🎯 Multi-Shot) |
+| 🦋 Mystic Butterfly | Rare | 32 | 3.0 | 0.9s | Magical wings (💚 Lifesteal) |
+| 🦀 Armored Crab | Common | 38 | 1.3 | 1.4s | Hard shell defender (⭐ Stun) |
+| 🦩 Flame Flamingo | Epic | 70 | 3.3 | 1.2s | Elegant fire bird (🔥 Burn) |
+| 🦥 Battle Sloth | Common | 45 | 1.5 | 2.0s | Slow but mighty (⭐ Stun) |
+
+### Special Abilities
+- **☠️ Poison** - Applies stacking damage over time (up to 3 stacks)
+- **💥 Splash Damage** - Deals 40% damage to nearby enemies
+- **❄️ Slow** - Reduces enemy speed by 50% for 3 seconds
+- **⭐ Stun** - 20% chance to stop enemy for 1.5 seconds
+- **💚 Lifesteal** - Gain bonus coins equal to 15% of damage dealt
+- **🔥 Burn** - Deals 15% damage per tick for 5 ticks over 4 seconds
+- **🎯 Multi-Shot** - Attacks up to 2 additional targets at 50% damage
 
 ### Enemy Types
 - **👾 Slime** - Basic enemy (50 HP, 1.0 speed)
@@ -106,15 +132,22 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 - Balance your currency spending between deployment and gacha
 
 ## New Features (Latest Update)
+- ✨ **Special Abilities System** - 7 unique abilities (Poison, Splash, Slow, Stun, Lifesteal, Burn, Multi-Shot)
+- 🐾 **Massive Pet Expansion** - 43+ total pets with 15 new pets featuring special abilities
+- 💥 **Smooth Projectile Animation** - Replaced spinning with smooth glowing tracking animation
+- 🗺️ **Enhanced Path Visualization** - Arrows on path tiles show enemy direction
+- 📊 **Ability Display** - See pet abilities in inventory and on deployed defenders
+- 🎯 **Multi-Shot** - Some pets can hit multiple targets at once
+- ☠️ **Poison** - Damage over time effects with stacking
+- 💥 **Splash Damage** - Hit multiple enemies in area
+- ❄️ **Slow** - Reduce enemy movement speed
+- ⭐ **Stun** - Chance to temporarily stop enemies
+- 💚 **Lifesteal** - Gain bonus coins from damage
+- 🔥 **Burn** - Damage over time with fire effects
 - ⬆️ **Tower Upgrade System** - Upgrade defenders for better stats (+20% per level)
-- 💰 **Permanent Sale System** - Sold pets are gone forever (with confirmation dialog) - strategic decisions matter!
+- 💰 **Permanent Sale System** - Sold pets are gone forever (with confirmation dialog)
 - 🔄 **Move Towers** - Relocate defenders without losing upgrade progress
-- 📊 **Stat Display** - Hover over defenders to see detailed stats
 - ⌨️ **Keyboard Shortcuts** - Space/Enter for waves, G for gacha, Esc to close
-- 💥 **Enhanced Projectiles** - Spinning animations with glow effects, dynamic projectile types based on damage, and impact effects
-- 🐾 **Expanded Pet Collection** - 28 total pets (up from 18) including new common, rare, and epic pets
-- 📈 **Quality of Life** - Pet count in inventory, defender count in wave info, pet preview on placeable cells
-- 🗺️ **Optimized Path** - Straight-line path for more strategic placement
 
 ## Future Ideas
 - Multiple paths/maps
