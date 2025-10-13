@@ -48,7 +48,17 @@ const PET_DEFENDERS = [
   { id: 'lion', emoji: '🦁', name: 'Lion King', cost: 500, damage: 90, range: 2.0, attackSpeed: 0.8, rarity:'legendary', description:'Ultimate damage dealer' },
   { id: 'unicorn', emoji: '🦄', name: 'Unicorn', cost: 480, damage: 80, range: 2.8, attackSpeed: 0.7, rarity:'legendary', description:'Magical powerhouse' },
   { id: 'trex', emoji: '🦖', name: 'T-Rex', cost: 520, damage: 100, range: 1.6, attackSpeed: 1.2, rarity:'legendary', description:'Prehistoric destroyer' },
-  { id: 'kraken', emoji: '🐙', name: 'Kraken', cost: 510, damage: 85, range: 3.0, attackSpeed: 0.9, rarity:'legendary', description:'Tentacled terror' }
+  { id: 'kraken', emoji: '🐙', name: 'Kraken', cost: 510, damage: 85, range: 3.0, attackSpeed: 0.9, rarity:'legendary', description:'Tentacled terror' },
+  { id: 'raccoon', emoji: '🦝', name: 'Sneaky Raccoon', cost: 65, damage: 20, range: 1.7, attackSpeed: 0.7, rarity:'common', description:'Stealthy attacker' },
+  { id: 'penguin', emoji: '🐧', name: 'Ice Penguin', cost: 70, damage: 24, range: 2.1, attackSpeed: 0.9, rarity:'common', description:'Cool defender' },
+  { id: 'koala', emoji: '🐨', name: 'Koala Warrior', cost: 90, damage: 28, range: 1.4, attackSpeed: 1.3, rarity:'common', description:'Sleepy but strong' },
+  { id: 'eagle', emoji: '🦅', name: 'War Eagle', cost: 145, damage: 32, range: 3.8, attackSpeed: 1.1, rarity:'rare', description:'Sky dominator' },
+  { id: 'gorilla', emoji: '🦍', name: 'Gorilla Guard', cost: 155, damage: 48, range: 1.3, attackSpeed: 1.6, rarity:'rare', description:'Powerful tank' },
+  { id: 'rhino', emoji: '🦏', name: 'Rhino Charger', cost: 165, damage: 52, range: 1.5, attackSpeed: 1.7, rarity:'rare', description:'Heavy hitter' },
+  { id: 'leopard', emoji: '🐆', name: 'Speed Leopard', cost: 170, damage: 42, range: 2.5, attackSpeed: 0.7, rarity:'rare', description:'Lightning fast' },
+  { id: 'hydra', emoji: '🐉', name: 'Hydra', cost: 310, damage: 72, range: 2.8, attackSpeed: 1.3, rarity:'epic', description:'Multi-headed beast' },
+  { id: 'griffin', emoji: '🦅', name: 'Griffin', cost: 295, damage: 68, range: 3.2, attackSpeed: 1.0, rarity:'epic', description:'Mythical guardian' },
+  { id: 'cerberus', emoji: '🐺', name: 'Cerberus', cost: 305, damage: 75, range: 1.9, attackSpeed: 1.1, rarity:'epic', description:'Three-headed guardian' }
 ];
 
 const ENEMY_TYPES = [
@@ -432,7 +442,9 @@ function updateProjectiles(deltaTime){
     
     // More generous hit detection for better accuracy
     if(dist < 0.3){
-      // Hit the target
+      // Hit the target - create impact effect
+      createImpactEffect(proj.x, proj.y);
+      
       proj.targetEnemy.hp -= proj.damage;
       if(proj.targetEnemy.hp <= 0){
         log(`💥 ${proj.defenderName} defeated ${proj.targetEnemy.name} (+${proj.targetEnemy.reward} coins, +${proj.targetEnemy.gems} gems)`);
@@ -451,6 +463,24 @@ function updateProjectiles(deltaTime){
   });
   
   state.projectiles = state.projectiles.filter(p => !toRemove.includes(p.id));
+}
+
+// Create impact effect when projectile hits enemy
+function createImpactEffect(x, y){
+  const enemiesContainer = document.getElementById('enemiesContainer');
+  if(!enemiesContainer) return;
+  
+  const impact = document.createElement('div');
+  impact.className = 'impact-effect';
+  impact.style.left = `${x * (100 / GRID_COLS)}%`;
+  impact.style.top = `${y * (100 / GRID_ROWS)}%`;
+  impact.innerHTML = '💥';
+  enemiesContainer.appendChild(impact);
+  
+  // Remove after animation
+  setTimeout(() => {
+    impact.remove();
+  }, 500);
 }
 
 // Trigger visual attack animation for defender
@@ -533,9 +563,9 @@ function updateBattleGrid() {
           <div class="info-line">⚡ ${cell.defender.attackSpeed.toFixed(2)}s</div>
         </div>
         <div class="defender-controls">
-          <button class="control-btn upgrade-btn" onclick="upgradeDefender(${idx})" title="Upgrade (${upgradeCost} coins)">⬆️</button>
-          <button class="control-btn move-btn" onclick="moveDefender(${idx})" title="Move">🔄</button>
-          <button class="control-btn sell-btn" onclick="sellDefender(${idx})" title="Sell (${sellValue} coins)">💰</button>
+          <button class="control-btn upgrade-btn" onclick="upgradeDefender(${idx})" title="Upgrade (+20% stats for ${upgradeCost} coins)">⬆️</button>
+          <button class="control-btn move-btn" onclick="moveDefender(${idx})" title="Move to another location">🔄</button>
+          <button class="control-btn sell-btn" onclick="sellDefender(${idx})" title="⚠️ SELL for ${sellValue} coins (GONE FOREVER!)">💰</button>
         </div>
       `;
     } else {
@@ -545,6 +575,8 @@ function updateBattleGrid() {
         // Show preview when pet is selected
         if(state.selectedDefender){
           el.classList.add('ready-to-place');
+          // Show preview emoji with reduced opacity
+          el.innerHTML = `<div class="pet-preview">${state.selectedDefender.emoji}</div>`;
         }
       }
     }
@@ -577,7 +609,9 @@ function renderEnemies() {
     projEl.className = 'projectile';
     projEl.style.left = `${proj.x * (100 / GRID_COLS)}%`;
     projEl.style.top = `${proj.y * (100 / GRID_ROWS)}%`;
-    projEl.innerHTML = '💫';
+    // Use different projectile emojis based on damage
+    const projectileEmoji = proj.damage >= 70 ? '🔥' : proj.damage >= 40 ? '⚡' : proj.damage >= 25 ? '✨' : '💫';
+    projEl.innerHTML = projectileEmoji;
     enemiesContainer.appendChild(projEl);
   });
 }
@@ -602,6 +636,12 @@ function renderShop(){
 
 function renderInventory(){
   inventoryEl.innerHTML = '';
+  
+  // Update inventory section header to show count
+  const inventoryHeader = document.querySelector('#inventorySection h3');
+  if(inventoryHeader){
+    inventoryHeader.textContent = `Your Pets (${state.ownedPets.length})`;
+  }
   
   if(state.ownedPets.length === 0){
     inventoryEl.innerHTML = '<p class="hint">No pets! Use gacha to get more.</p>';
@@ -640,7 +680,7 @@ function updateUI(){
   if(state.isWaveActive && state.enemies.length > 0){
     waveNumberEl.textContent = `${state.wave} (${state.enemies.length} enemies)`;
   } else {
-    waveNumberEl.textContent = state.wave;
+    waveNumberEl.textContent = `${state.wave} (${state.defenders.length} defenders)`;
   }
   
   updateBattleGrid();
@@ -704,20 +744,22 @@ function sellDefender(cellIdx){
   const defender = cell.defender;
   const refund = Math.floor(((defender.cost || 50) + (defender.totalCost || 0)) * 0.7);
   
-  // Return to inventory as new pet
-  const returnedPet = {
-    ...PET_DEFENDERS.find(p => p.id === defender.id),
-    uniqueId: Date.now() + '_' + Math.random()
-  };
+  // Confirm sale since pet will be gone forever
+  const confirmed = confirm(`⚠️ Are you sure you want to sell ${defender.name}?\n\nYou will receive ${refund} coins, but the pet will be GONE FOREVER and cannot be recovered.\n\nClick OK to confirm sale.`);
   
-  state.ownedPets.push(returnedPet);
+  if(!confirmed) {
+    log(`❌ Sale cancelled for ${defender.name}`);
+    return;
+  }
+  
+  // Pet is sold and gone forever (not returned to inventory)
   state.coins += refund;
   
   // Remove defender
   state.defenders = state.defenders.filter(d => d !== defender);
   cell.defender = null;
   
-  log(`💰 Sold ${defender.name} for ${refund} coins!`);
+  log(`💰 Sold ${defender.name} for ${refund} coins! (Pet is gone forever)`);
   save();
   updateUI();
   updateShopAndInventory();
