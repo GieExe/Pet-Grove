@@ -222,6 +222,16 @@ section{
   transform:scale(1.05);
 }
 
+.cell.ready-to-place{
+  border-color:rgba(106,176,76,0.5);
+  animation:ready-pulse 1s infinite;
+}
+
+@keyframes ready-pulse{
+  0%, 100%{background:var(--placeable)}
+  50%{background:rgba(106,176,76,0.15)}
+}
+
 .cell.has-defender{
   background:rgba(106,176,76,0.2);
   border-color:var(--success);
@@ -283,6 +293,26 @@ section{
   transition:width 0.2s;
 }
 
+.projectile{
+  position:absolute;
+  font-size:16px;
+  width:12.5%;
+  height:20%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all 0.05s linear;
+  z-index:5;
+  pointer-events:none;
+  filter:drop-shadow(0 0 4px rgba(255,255,255,0.8));
+  animation:projectile-pulse 0.3s infinite;
+}
+
+@keyframes projectile-pulse{
+  0%, 100%{transform:scale(1)}
+  50%{transform:scale(1.2)}
+}
+
 /* Inventory Styles */
 #inventory{
   display:grid;
@@ -322,6 +352,13 @@ section{
 .inv-name{
   font-size:0.75rem;
   text-align:center;
+}
+
+.inv-stats{
+  font-size:0.65rem;
+  text-align:center;
+  color:var(--muted);
+  margin-top:2px;
 }
 
 /* Rarity colors */

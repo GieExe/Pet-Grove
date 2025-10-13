@@ -4,10 +4,10 @@
 const TICK_INTERVAL = 100; // ms - faster for TD gameplay
 const GRID_ROWS = 5;
 const GRID_COLS = 8;
-const STARTING_COINS = 100;
-const STARTING_GEMS = 50;
+const STARTING_COINS = 150;
+const STARTING_GEMS = 100;
 const STARTING_LIVES = 20;
-const GACHA_COST = 50;
+const GACHA_COST = 40;
 
 // Pet Defenders (Towers)
 const PET_DEFENDERS = [
@@ -16,9 +16,9 @@ const PET_DEFENDERS = [
     emoji: '🐶', 
     name: 'Guard Dog', 
     cost: 50, 
-    damage: 10, 
+    damage: 20, 
     range: 1.5, 
-    attackSpeed: 1.0,
+    attackSpeed: 0.8,
     rarity: 'common',
     description: 'Basic melee defender'
   },
@@ -27,35 +27,39 @@ const PET_DEFENDERS = [
     emoji: '🐱', 
     name: 'Ninja Cat', 
     cost: 75, 
-    damage: 15, 
+    damage: 25, 
     range: 2, 
-    attackSpeed: 0.8,
+    attackSpeed: 0.6,
     rarity: 'common',
     description: 'Fast attacker'
   },
-  { id: 'rabbit', emoji: '🐰', name: 'Swift Bunny', cost: 60, damage: 8, range: 1.8, attackSpeed: 0.6, rarity:'common', description:'Very fast attacker' },
-  { id: 'turtle', emoji: '🐢', name: 'Tank Turtle', cost: 80, damage: 18, range: 1.2, attackSpeed: 2.0, rarity:'common', description:'Slow but tough' },
-  { id: 'panda', emoji: '🐼', name: 'Kung Fu Panda', cost: 120, damage: 25, range: 1.5, attackSpeed: 1.5, rarity:'rare', description:'Strong melee fighter' },
-  { id: 'owl', emoji: '🦉', name: 'Wise Owl', cost: 150, damage: 12, range: 3.5, attackSpeed: 1.5, rarity:'rare', description:'Long range sniper' },
-  { id: 'bear', emoji: '🐻', name: 'Grizzly Bear', cost: 140, damage: 30, range: 1.8, attackSpeed: 1.8, rarity:'rare', description:'Powerful close range' },
-  { id: 'wolf', emoji: '🐺', name: 'Alpha Wolf', cost: 160, damage: 22, range: 2.2, attackSpeed: 1.2, rarity:'rare', description:'Balanced fighter' },
-  { id: 'dragon', emoji: '🐲', name: 'Fire Dragon', cost: 300, damage: 40, range: 3.0, attackSpeed: 2.0, rarity:'epic', description:'Powerful ranged attacker' },
-  { id: 'tiger', emoji: '🐯', name: 'Bengal Tiger', cost: 280, damage: 38, range: 2.0, attackSpeed: 1.4, rarity:'epic', description:'Fierce predator' },
-  { id: 'phoenix', emoji: '🦅', name: 'Phoenix', cost: 320, damage: 35, range: 3.5, attackSpeed: 1.6, rarity:'epic', description:'Aerial superiority' },
-  { id: 'lion', emoji: '🦁', name: 'Lion King', cost: 500, damage: 50, range: 2.0, attackSpeed: 1.2, rarity:'legendary', description:'Ultimate damage dealer' },
-  { id: 'unicorn', emoji: '🦄', name: 'Unicorn', cost: 480, damage: 45, range: 2.8, attackSpeed: 1.0, rarity:'legendary', description:'Magical powerhouse' },
-  { id: 'trex', emoji: '🦖', name: 'T-Rex', cost: 520, damage: 55, range: 1.6, attackSpeed: 1.8, rarity:'legendary', description:'Prehistoric destroyer' }
+  { id: 'rabbit', emoji: '🐰', name: 'Swift Bunny', cost: 60, damage: 18, range: 1.8, attackSpeed: 0.5, rarity:'common', description:'Very fast attacker' },
+  { id: 'turtle', emoji: '🐢', name: 'Tank Turtle', cost: 80, damage: 30, range: 1.2, attackSpeed: 1.5, rarity:'common', description:'Slow but tough' },
+  { id: 'fox', emoji: '🦊', name: 'Clever Fox', cost: 70, damage: 22, range: 2.2, attackSpeed: 0.7, rarity:'common', description:'Cunning and quick' },
+  { id: 'panda', emoji: '🐼', name: 'Kung Fu Panda', cost: 120, damage: 40, range: 1.5, attackSpeed: 1.2, rarity:'rare', description:'Strong melee fighter' },
+  { id: 'owl', emoji: '🦉', name: 'Wise Owl', cost: 150, damage: 28, range: 3.5, attackSpeed: 1.0, rarity:'rare', description:'Long range sniper' },
+  { id: 'bear', emoji: '🐻', name: 'Grizzly Bear', cost: 140, damage: 50, range: 1.8, attackSpeed: 1.4, rarity:'rare', description:'Powerful close range' },
+  { id: 'wolf', emoji: '🐺', name: 'Alpha Wolf', cost: 160, damage: 38, range: 2.2, attackSpeed: 0.9, rarity:'rare', description:'Balanced fighter' },
+  { id: 'monkey', emoji: '🐵', name: 'Warrior Monkey', cost: 130, damage: 35, range: 1.6, attackSpeed: 0.8, rarity:'rare', description:'Agile fighter' },
+  { id: 'dragon', emoji: '🐲', name: 'Fire Dragon', cost: 300, damage: 70, range: 3.0, attackSpeed: 1.5, rarity:'epic', description:'Powerful ranged attacker' },
+  { id: 'tiger', emoji: '🐯', name: 'Bengal Tiger', cost: 280, damage: 65, range: 2.0, attackSpeed: 1.0, rarity:'epic', description:'Fierce predator' },
+  { id: 'phoenix', emoji: '🦅', name: 'Phoenix', cost: 320, damage: 60, range: 3.5, attackSpeed: 1.2, rarity:'epic', description:'Aerial superiority' },
+  { id: 'shark', emoji: '🦈', name: 'Land Shark', cost: 290, damage: 68, range: 1.8, attackSpeed: 1.1, rarity:'epic', description:'Devastating attacker' },
+  { id: 'lion', emoji: '🦁', name: 'Lion King', cost: 500, damage: 90, range: 2.0, attackSpeed: 0.8, rarity:'legendary', description:'Ultimate damage dealer' },
+  { id: 'unicorn', emoji: '🦄', name: 'Unicorn', cost: 480, damage: 80, range: 2.8, attackSpeed: 0.7, rarity:'legendary', description:'Magical powerhouse' },
+  { id: 'trex', emoji: '🦖', name: 'T-Rex', cost: 520, damage: 100, range: 1.6, attackSpeed: 1.2, rarity:'legendary', description:'Prehistoric destroyer' },
+  { id: 'kraken', emoji: '🐙', name: 'Kraken', cost: 510, damage: 85, range: 3.0, attackSpeed: 0.9, rarity:'legendary', description:'Tentacled terror' }
 ];
 
 const ENEMY_TYPES = [
-  { id: 'slime', emoji: '👾', name: 'Slime', hp: 50, speed: 1.0, reward: 10, gems: 0 },
-  { id: 'goblin', emoji: '👹', name: 'Goblin', hp: 80, speed: 1.2, reward: 15, gems: 0 },
-  { id: 'imp', emoji: '👿', name: 'Imp', hp: 60, speed: 1.5, reward: 12, gems: 0 },
-  { id: 'orc', emoji: '👺', name: 'Orc', hp: 150, speed: 0.8, reward: 30, gems: 1 },
-  { id: 'ghost', emoji: '👻', name: 'Ghost', hp: 100, speed: 1.3, reward: 25, gems: 1 },
-  { id: 'demon', emoji: '😈', name: 'Demon', hp: 300, speed: 1.5, reward: 50, gems: 5 },
-  { id: 'skull', emoji: '💀', name: 'Skeleton', hp: 120, speed: 1.1, reward: 28, gems: 1 },
-  { id: 'alien', emoji: '👽', name: 'Alien', hp: 200, speed: 1.0, reward: 40, gems: 3 }
+  { id: 'slime', emoji: '👾', name: 'Slime', hp: 40, speed: 1.0, reward: 15, gems: 1 },
+  { id: 'goblin', emoji: '👹', name: 'Goblin', hp: 60, speed: 1.2, reward: 20, gems: 1 },
+  { id: 'imp', emoji: '👿', name: 'Imp', hp: 50, speed: 1.5, reward: 18, gems: 1 },
+  { id: 'orc', emoji: '👺', name: 'Orc', hp: 100, speed: 0.8, reward: 35, gems: 2 },
+  { id: 'ghost', emoji: '👻', name: 'Ghost', hp: 70, speed: 1.3, reward: 30, gems: 2 },
+  { id: 'demon', emoji: '😈', name: 'Demon', hp: 200, speed: 1.5, reward: 60, gems: 5 },
+  { id: 'skull', emoji: '💀', name: 'Skeleton', hp: 80, speed: 1.1, reward: 32, gems: 2 },
+  { id: 'alien', emoji: '👽', name: 'Alien', hp: 120, speed: 1.0, reward: 45, gems: 3 }
 ];
 
 // Gacha rarities and rates
@@ -211,7 +215,7 @@ function rollGacha(){
 
 function openGacha(){
   if(state.gems < GACHA_COST){
-    alert('Not enough gems! Need 50 gems.');
+    log(`⚠️ Not enough gems! Need ${GACHA_COST} gems.`);
     return;
   }
   
@@ -270,8 +274,8 @@ function spawnWave(){
     
     waveEnemies.push({
       ...enemyType,
-      hp: enemyType.hp * (1 + state.wave * 0.1), // Scale HP with wave
-      maxHp: enemyType.hp * (1 + state.wave * 0.1),
+      hp: enemyType.hp * (1 + state.wave * 0.05), // Gentler HP scaling
+      maxHp: enemyType.hp * (1 + state.wave * 0.05),
       pathIndex: 0,
       position: { ...PATH[0] },
       progress: 0,
@@ -341,8 +345,8 @@ function completeWave(){
   state.isWaveActive = false;
   state.wave++;
   
-  const coinReward = 50 + state.wave * 10;
-  const gemReward = 5 + Math.floor(state.wave / 3);
+  const coinReward = 80 + state.wave * 15;
+  const gemReward = 10 + Math.floor(state.wave / 2);
   state.coins += coinReward;
   state.gems += gemReward;
   
@@ -376,16 +380,62 @@ function updateDefenders(deltaTime){
       // Add attack animation
       triggerAttackAnimation(def);
       
-      // instant damage for simplicity
-      target.hp -= def.damage;
-      if(target.hp <= 0){
-        log(`💥 ${def.name} defeated ${target.name} (+${target.reward} coins)`);
-        state.coins += (target.reward || 0);
-        state.gems += (target.gems || 0);
-      }
+      // Create projectile
+      createProjectile(def, target);
+      
       def.attackCooldown = def.attackSpeed;
     }
   });
+}
+
+// Create projectile from defender to enemy
+function createProjectile(defender, enemy){
+  const defenderPos = getCellCenter(defender.row, defender.col);
+  const projectile = {
+    id: Date.now() + Math.random(),
+    x: defenderPos.x,
+    y: defenderPos.y,
+    targetEnemy: enemy,
+    damage: defender.damage,
+    speed: 5, // cells per second
+    defenderName: defender.name
+  };
+  state.projectiles.push(projectile);
+}
+
+// Update projectiles
+function updateProjectiles(deltaTime){
+  const toRemove = [];
+  
+  state.projectiles.forEach(proj => {
+    if(!proj.targetEnemy || proj.targetEnemy.hp <= 0){
+      toRemove.push(proj.id);
+      return;
+    }
+    
+    const targetPos = { x: proj.targetEnemy.position.col + 0.5, y: proj.targetEnemy.position.row + 0.5 };
+    const dx = targetPos.x - proj.x;
+    const dy = targetPos.y - proj.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    
+    if(dist < 0.2){
+      // Hit the target
+      proj.targetEnemy.hp -= proj.damage;
+      if(proj.targetEnemy.hp <= 0){
+        log(`💥 ${proj.defenderName} defeated ${proj.targetEnemy.name} (+${proj.targetEnemy.reward} coins, +${proj.targetEnemy.gems} gems)`);
+        state.coins += (proj.targetEnemy.reward || 0);
+        state.gems += (proj.targetEnemy.gems || 0);
+      }
+      toRemove.push(proj.id);
+    } else {
+      // Move toward target
+      const moveDistance = proj.speed * deltaTime;
+      proj.x += (dx / dist) * moveDistance;
+      proj.y += (dy / dist) * moveDistance;
+    }
+  });
+  
+  state.projectiles = state.projectiles.filter(p => !toRemove.includes(p.id));
 }
 
 // Trigger visual attack animation for defender
@@ -455,6 +505,10 @@ function updateBattleGrid() {
       el.innerHTML = '';
       if (!cell.isPath) {
         el.classList.add('placeable');
+        // Show preview when pet is selected
+        if(state.selectedDefender){
+          el.classList.add('ready-to-place');
+        }
       }
     }
   });
@@ -478,6 +532,16 @@ function renderEnemies() {
       </div>
     `;
     enemiesContainer.appendChild(enemyEl);
+  });
+  
+  // Render projectiles
+  state.projectiles.forEach(proj => {
+    const projEl = document.createElement('div');
+    projEl.className = 'projectile';
+    projEl.style.left = `${proj.x * (100 / GRID_COLS)}%`;
+    projEl.style.top = `${proj.y * (100 / GRID_ROWS)}%`;
+    projEl.innerHTML = '💫';
+    enemiesContainer.appendChild(projEl);
   });
 }
 
@@ -516,12 +580,14 @@ function renderInventory(){
     div.innerHTML = `
       <div class="inv-emoji">${pet.emoji}</div>
       <div class="inv-name">${pet.name}</div>
+      <div class="inv-stats">💪${pet.damage} 📏${pet.range}</div>
     `;
-    div.title = `${pet.description}\nDamage: ${pet.damage}, Range: ${pet.range}\nClick to select`;
+    div.title = `${pet.description}\nDamage: ${pet.damage}, Range: ${pet.range}, Speed: ${pet.attackSpeed}s\nClick to select for deployment`;
     // stable event listener; recreating inventory is OK on selection changes,
     // but we use addEventListener to avoid accidental overwrite if desired
     div.addEventListener('click', () => {
       state.selectedDefender = pet;
+      log(`✅ Selected ${pet.name} - Click on a placeable cell to deploy!`);
       updateShopAndInventory();
     });
     inventoryEl.appendChild(div);
@@ -558,22 +624,22 @@ function gameOver(){
   updateShopAndInventory();
 }
 
-/* --- Place defender (unchanged logic) --- */
+/* --- Place defender (improved feedback) --- */
 function placeDefender(cellIdx){
   const cell = state.cells[cellIdx];
   
   if(!state.selectedDefender){
-    alert('Select a pet from your inventory first!');
+    log('⚠️ Select a pet from your inventory first!');
     return;
   }
   
   if(cell.isPath){
-    alert('Cannot place defenders on the path!');
+    log('⚠️ Cannot place defenders on the path!');
     return;
   }
   
   if(cell.defender){
-    alert('Cell already occupied!');
+    log('⚠️ Cell already occupied!');
     return;
   }
   
@@ -592,7 +658,7 @@ function placeDefender(cellIdx){
   state.ownedPets = state.ownedPets.filter(p => p.uniqueId !== state.selectedDefender.uniqueId);
   state.selectedDefender = null;
   
-  log(`Deployed ${defender.name} at (${cell.row}, ${cell.col})`);
+  log(`✅ Deployed ${defender.name} at (${cell.row}, ${cell.col})`);
   updateUI();
   updateShopAndInventory();
 }
@@ -613,6 +679,7 @@ function gameLoop(){
     if(state.isWaveActive){
       updateEnemies(deltaSec);
       updateDefenders(deltaSec);
+      updateProjectiles(deltaSec);
       // Only update UI during active wave for better performance
       updateUI();
     }
@@ -634,6 +701,9 @@ function init(){
   
   // Ensure defenders array exists
   if(!state.defenders) state.defenders = [];
+  
+  // Ensure projectiles array exists
+  if(!state.projectiles) state.projectiles = [];
   
   // Rebuild defender references in cells from loaded defenders
   if(state.defenders.length > 0){
