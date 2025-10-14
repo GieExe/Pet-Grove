@@ -361,15 +361,35 @@ section{
 }
 
 .defender.attacking{
-  animation:attack 0.3s ease-out;
+  animation:attack 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
+/* Improved attack animation with bounce and glow */
 @keyframes attack{
-  0%{transform:scale(1) rotate(0deg)}
-  25%{transform:scale(1.3) rotate(-10deg)}
-  50%{transform:scale(1.4) rotate(10deg)}
-  75%{transform:scale(1.3) rotate(-5deg)}
-  100%{transform:scale(1) rotate(0deg)}
+  0%{
+    transform:scale(1) rotate(0deg);
+    filter:brightness(1) drop-shadow(0 0 0px rgba(255,255,255,0));
+  }
+  20%{
+    transform:scale(1.35) rotate(-12deg);
+    filter:brightness(1.3) drop-shadow(0 0 10px rgba(255,215,0,0.8));
+  }
+  40%{
+    transform:scale(1.45) rotate(12deg);
+    filter:brightness(1.5) drop-shadow(0 0 15px rgba(255,165,0,1));
+  }
+  60%{
+    transform:scale(1.35) rotate(-8deg);
+    filter:brightness(1.3) drop-shadow(0 0 10px rgba(255,215,0,0.8));
+  }
+  80%{
+    transform:scale(1.15) rotate(4deg);
+    filter:brightness(1.1) drop-shadow(0 0 5px rgba(255,255,255,0.5));
+  }
+  100%{
+    transform:scale(1) rotate(0deg);
+    filter:brightness(1) drop-shadow(0 0 0px rgba(255,255,255,0));
+  }
 }
 
 .enemy{
@@ -418,33 +438,57 @@ section{
 
 .projectile{
   position:absolute;
-  font-size:20px;
+  font-size:22px;
   width:12.5%;
   height:20%;
   display:flex;
   align-items:center;
   justify-content:center;
-  transition:all 0.05s linear;
+  transition:all 0.03s linear;
   z-index:5;
   pointer-events:none;
-  filter:drop-shadow(0 0 6px rgba(255,215,0,0.9)) drop-shadow(0 0 12px rgba(255,165,0,0.6));
-  animation:projectile-glow 0.5s ease-in-out infinite alternate;
+  filter:drop-shadow(0 0 8px rgba(255,215,0,1)) drop-shadow(0 0 16px rgba(255,165,0,0.8)) drop-shadow(0 0 20px rgba(255,100,0,0.4));
+  animation:projectile-glow 0.4s ease-in-out infinite alternate, projectile-spin 0.8s linear infinite;
 }
 
+/* Improved projectile glow with stronger effects */
 @keyframes projectile-glow{
   0%{
     transform:scale(1);
-    filter:drop-shadow(0 0 6px rgba(255,215,0,0.9)) drop-shadow(0 0 12px rgba(255,165,0,0.6));
+    filter:drop-shadow(0 0 8px rgba(255,215,0,1)) drop-shadow(0 0 16px rgba(255,165,0,0.8)) drop-shadow(0 0 20px rgba(255,100,0,0.4));
   }
   100%{
-    transform:scale(1.1);
-    filter:drop-shadow(0 0 8px rgba(255,215,0,1)) drop-shadow(0 0 16px rgba(255,165,0,0.8));
+    transform:scale(1.15);
+    filter:drop-shadow(0 0 12px rgba(255,215,0,1)) drop-shadow(0 0 24px rgba(255,165,0,1)) drop-shadow(0 0 30px rgba(255,100,0,0.6));
   }
+}
+
+/* Subtle rotation for visual interest */
+@keyframes projectile-spin{
+  0%{transform:rotate(0deg) scale(1)}
+  50%{transform:rotate(180deg) scale(1.05)}
+  100%{transform:rotate(360deg) scale(1)}
+}
+
+/* Trail effect for projectiles */
+.projectile::after{
+  content:'';
+  position:absolute;
+  width:200%;
+  height:200%;
+  background:radial-gradient(circle, rgba(255,215,0,0.3) 0%, rgba(255,165,0,0.15) 30%, transparent 60%);
+  z-index:-1;
+  animation:trail-pulse 0.5s ease-out infinite;
+}
+
+@keyframes trail-pulse{
+  0%{transform:scale(0.8); opacity:1}
+  100%{transform:scale(1.5); opacity:0}
 }
 
 .impact-effect{
   position:absolute;
-  font-size:28px;
+  font-size:32px;
   width:12.5%;
   height:20%;
   display:flex;
@@ -452,7 +496,8 @@ section{
   justify-content:center;
   z-index:15;
   pointer-events:none;
-  animation:impact-burst 0.5s ease-out forwards;
+  animation:impact-burst 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  filter:drop-shadow(0 0 10px rgba(255,100,0,1)) drop-shadow(0 0 20px rgba(255,50,0,0.8));
 }
 
 .floating-text{
@@ -467,16 +512,24 @@ section{
 
 @keyframes impact-burst{
   0%{
-    transform:scale(0.5);
+    transform:scale(0.3) rotate(0deg);
     opacity:1;
+    filter:drop-shadow(0 0 10px rgba(255,100,0,1)) drop-shadow(0 0 20px rgba(255,50,0,0.8));
   }
-  50%{
-    transform:scale(1.5);
-    opacity:0.8;
+  30%{
+    transform:scale(1.4) rotate(45deg);
+    opacity:1;
+    filter:drop-shadow(0 0 20px rgba(255,150,0,1)) drop-shadow(0 0 35px rgba(255,100,0,1));
+  }
+  60%{
+    transform:scale(1.8) rotate(90deg);
+    opacity:0.6;
+    filter:drop-shadow(0 0 25px rgba(255,200,0,0.8)) drop-shadow(0 0 40px rgba(255,150,0,0.6));
   }
   100%{
-    transform:scale(2);
+    transform:scale(2.5) rotate(180deg);
     opacity:0;
+    filter:drop-shadow(0 0 30px rgba(255,255,0,0.3)) drop-shadow(0 0 50px rgba(255,200,0,0.2));
   }
 }
 
