@@ -4,7 +4,7 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 
 ## Features
 - 🛡️ **Tower Defense Gameplay** - Deploy pets strategically to defend against enemy waves
-- 🐾 **Multiple Pet Defenders** - 43+ unique pets with different stats, rarities, and abilities
+- 🐾 **Multiple Pet Defenders** - 65+ unique pets with different stats, rarities, and abilities
 - ✨ **Special Abilities** - Poison, Splash, Slow, Stun, Lifesteal, Burn, and Multi-Shot abilities
 - 💰 **Dual Currency System** - Earn coins from battles and gems from wave completion
 - 🎲 **Gacha System** - Pull for new pets with rarity tiers (Common, Rare, Epic, Legendary)
@@ -34,9 +34,18 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 9. **Survive** - Don't let enemies reach the end or you'll lose lives!
 
 ## How to Run
+
+### Option 1: Direct Browser (Simple)
 1. Clone or download the repository
 2. Open `index.html` in a modern browser
 3. Play! Progress is saved automatically
+
+### Option 2: Development Server (Recommended)
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Start dev server: `npm run dev`
+4. Open browser to `http://localhost:5173`
+5. Build for production: `npm run build`
 
 ## Game Mechanics
 
@@ -92,6 +101,18 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 | 🦀 Armored Crab | Common | 38 | 1.3 | 1.4s | Hard shell defender (⭐ Stun) |
 | 🦩 Flame Flamingo | Epic | 70 | 3.3 | 1.2s | Elegant fire bird (🔥 Burn) |
 | 🦥 Battle Sloth | Common | 45 | 1.5 | 2.0s | Slow but mighty (⭐ Stun) |
+| 🦜 Sky Parrot | Common | 26 | 2.8 | 0.8s | Colorful flyer |
+| 🐹 Battle Hamster | Common | 19 | 1.6 | 0.6s | Tiny but fierce |
+| 🦔 Spike Guard | Common | 28 | 1.4 | 1.2s | Spiky defender (⭐ Stun) |
+| 🦦 River Otter | Common | 30 | 2.0 | 0.7s | Playful fighter (🎯 Multi-Shot) |
+| 🦡 Honey Badger | Rare | 46 | 1.5 | 1.1s | Fearless warrior |
+| 🐈 Wild Lynx | Rare | 44 | 2.4 | 0.8s | Stealthy predator (☠️ Poison) |
+| 🦅 Dive Falcon | Rare | 38 | 3.6 | 0.9s | Swift striker (🎯 Multi-Shot) |
+| 🐗 War Boar | Rare | 54 | 1.3 | 1.5s | Charging beast (⭐ Stun) |
+| 🦎 Fire Salamander | Epic | 74 | 2.7 | 1.2s | Flame thrower (🔥 Burn) |
+| 🗿 Stone Gargoyle | Epic | 76 | 2.0 | 1.6s | Ancient guardian (💥 Splash) |
+| 🦁 Manticore | Legendary | 100 | 2.8 | 0.85s | Mythical beast (☠️ Poison) |
+| ⚡ Thunder Bird | Legendary | 96 | 3.5 | 0.95s | Storm bringer (⭐ Stun) |
 
 ### Special Abilities
 - **☠️ Poison** - Applies stacking damage over time (up to 3 stacks)
@@ -112,12 +133,14 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 - **💀 Skeleton** - Balanced enemy (120 HP, 1.1 speed)
 - **👽 Alien** - Elite enemy (200 HP, 1.0 speed)
 
-### Gacha Rates
-- **Common**: 60% chance
-- **Rare**: 25% chance
-- **Epic**: 12% chance
+### Gacha Rates (Rebalanced)
+- **Common**: 65% chance
+- **Rare**: 22% chance
+- **Epic**: 10% chance
 - **Legendary**: 3% chance
 - **Cost**: 40 gems per pull
+
+*Rates adjusted to make epic and legendary pets more valuable and rewarding*
 
 ### Wave Rewards
 - Coins increase with each wave completed
@@ -132,18 +155,29 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 - Balance your currency spending between deployment and gacha
 
 ## New Features (Latest Update)
+
+### Animation Improvements
+- 💫 **Enhanced Projectile Animations** - Smooth glowing projectiles with particle trail effects and rotation
+- ⚡ **Improved Attack Animations** - Bounce effects with dynamic glow and brightness changes
+- 💥 **Better Impact Effects** - Explosive burst animations with rotation and expanding glow
+- 🚀 **Faster Projectile Speed** - Increased from 3 to 4.5 cells/sec for smoother gameplay
+
+### NPM & Build System
+- 📦 **NPM Integration** - Professional package.json with Vite build system
+- 🔧 **Phaser Ready** - Phaser 3.80.1 installed and ready for future advanced animations
+- ⚙️ **Development Server** - Run `npm run dev` for hot-reload development
+- 🏗️ **Production Builds** - Use `npm run build` to create optimized builds
+
+### Pet & Balance Updates
+- 🐾 **12 New Pets** - Added Parrot, Hamster, Hedgehog, Otter, Badger, Lynx, Falcon, Boar, Salamander, Gargoyle, Manticore, and Thunder Bird
+- 📊 **65+ Total Pets** - Massive variety with balanced distribution across rarities
+- ⚖️ **Rebalanced Gacha Rates** - Epic (12%→10%) and Rare (25%→22%) adjusted for better value
+- 🎯 **Wave Progress Indicator** - Live tracking shows "Wave X 🎯 defeated/total"
+
+### Previous Features
 - ✨ **Special Abilities System** - 7 unique abilities (Poison, Splash, Slow, Stun, Lifesteal, Burn, Multi-Shot)
-- 🐾 **Massive Pet Expansion** - 43+ total pets with 15 new pets featuring special abilities
-- 💥 **Smooth Projectile Animation** - Replaced spinning with smooth glowing tracking animation
 - 🗺️ **Enhanced Path Visualization** - Arrows on path tiles show enemy direction
 - 📊 **Ability Display** - See pet abilities in inventory and on deployed defenders
-- 🎯 **Multi-Shot** - Some pets can hit multiple targets at once
-- ☠️ **Poison** - Damage over time effects with stacking
-- 💥 **Splash Damage** - Hit multiple enemies in area
-- ❄️ **Slow** - Reduce enemy movement speed
-- ⭐ **Stun** - Chance to temporarily stop enemies
-- 💚 **Lifesteal** - Gain bonus coins from damage
-- 🔥 **Burn** - Damage over time with fire effects
 - ⬆️ **Tower Upgrade System** - Upgrade defenders for better stats (+20% per level)
 - 💰 **Permanent Sale System** - Sold pets are gone forever (with confirmation dialog)
 - 🔄 **Move Towers** - Relocate defenders without losing upgrade progress

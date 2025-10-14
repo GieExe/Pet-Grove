@@ -85,7 +85,20 @@ const PET_DEFENDERS = [
   { id: 'peacock', emoji: '🦚', name: 'Royal Peacock', cost: 315, damage: 68, range: 3.0, attackSpeed: 1.1, rarity:'epic', description:'Dazzling defender', ability:'slow' },
   { id: 'phoenix2', emoji: '🔥', name: 'True Phoenix', cost: 550, damage: 95, range: 3.8, attackSpeed: 0.9, rarity:'legendary', description:'Reborn from ashes', ability:'burn' },
   { id: 'yeti', emoji: '❄️', name: 'Frost Yeti', cost: 530, damage: 92, range: 2.2, attackSpeed: 1.0, rarity:'legendary', description:'Ice beast', ability:'slow' },
-  { id: 'chimera', emoji: '🐲', name: 'Chimera', cost: 560, damage: 98, range: 2.6, attackSpeed: 0.8, rarity:'legendary', description:'Triple threat', ability:'splash' }
+  { id: 'chimera', emoji: '🐲', name: 'Chimera', cost: 560, damage: 98, range: 2.6, attackSpeed: 0.8, rarity:'legendary', description:'Triple threat', ability:'splash' },
+  // New pets for better variety
+  { id: 'parrot', emoji: '🦜', name: 'Sky Parrot', cost: 90, damage: 26, range: 2.8, attackSpeed: 0.8, rarity:'common', description:'Colorful flyer' },
+  { id: 'hamster', emoji: '🐹', name: 'Battle Hamster', cost: 55, damage: 19, range: 1.6, attackSpeed: 0.6, rarity:'common', description:'Tiny but fierce' },
+  { id: 'hedgehog', emoji: '🦔', name: 'Spike Guard', cost: 85, damage: 28, range: 1.4, attackSpeed: 1.2, rarity:'common', description:'Spiky defender', ability:'stun' },
+  { id: 'otter', emoji: '🦦', name: 'River Otter', cost: 100, damage: 30, range: 2.0, attackSpeed: 0.7, rarity:'common', description:'Playful fighter', ability:'multishot' },
+  { id: 'badger', emoji: '🦡', name: 'Honey Badger', cost: 175, damage: 46, range: 1.5, attackSpeed: 1.1, rarity:'rare', description:'Fearless warrior' },
+  { id: 'lynx', emoji: '🐈', name: 'Wild Lynx', cost: 165, damage: 44, range: 2.4, attackSpeed: 0.8, rarity:'rare', description:'Stealthy predator', ability:'poison' },
+  { id: 'falcon', emoji: '🦅', name: 'Dive Falcon', cost: 180, damage: 38, range: 3.6, attackSpeed: 0.9, rarity:'rare', description:'Swift striker', ability:'multishot' },
+  { id: 'boar', emoji: '🐗', name: 'War Boar', cost: 190, damage: 54, range: 1.3, attackSpeed: 1.5, rarity:'rare', description:'Charging beast', ability:'stun' },
+  { id: 'salamander', emoji: '🦎', name: 'Fire Salamander', cost: 325, damage: 74, range: 2.7, attackSpeed: 1.2, rarity:'epic', description:'Flame thrower', ability:'burn' },
+  { id: 'gargoyle', emoji: '🗿', name: 'Stone Gargoyle', cost: 340, damage: 76, range: 2.0, attackSpeed: 1.6, rarity:'epic', description:'Ancient guardian', ability:'splash' },
+  { id: 'manticore', emoji: '🦁', name: 'Manticore', cost: 570, damage: 100, range: 2.8, attackSpeed: 0.85, rarity:'legendary', description:'Mythical beast', ability:'poison' },
+  { id: 'thunderbird', emoji: '⚡', name: 'Thunder Bird', cost: 580, damage: 96, range: 3.5, attackSpeed: 0.95, rarity:'legendary', description:'Storm bringer', ability:'stun' }
 ];
 
 const ENEMY_TYPES = [
@@ -107,12 +120,12 @@ const ENEMY_TYPES = [
   { id: 'golem', emoji: '🗿', name: 'Stone Golem', hp: 350, speed: 0.5, reward: 90, gems: 8 }
 ];
 
-// Gacha rarities and rates
+// Gacha rarities and rates - Adjusted for better balance
 const GACHA_RATES = {
-  common: 0.60,    // 60%
-  rare: 0.25,      // 25%
-  epic: 0.12,      // 12%
-  legendary: 0.03  // 3%
+  common: 0.65,     // 65% - Increased slightly
+  rare: 0.22,       // 22% - Reduced slightly  
+  epic: 0.10,       // 10% - Reduced for more value
+  legendary: 0.03   // 3% - Kept rare as legendary should be
 };
 
 /* --- DOM refs --- */
@@ -453,6 +466,7 @@ function spawnWave(){
   }
   
   state.enemies = waveEnemies;
+  state.totalEnemiesInWave = baseEnemies; // Track total for progress display
   log(`🌊 Wave ${state.wave} started! ${baseEnemies} enemies incoming!`);
 }
 
@@ -690,7 +704,7 @@ function createProjectile(defender, enemy){
     y: defenderPos.y,
     targetEnemy: enemy,
     damage: defender.damage,
-    speed: 3, // cells per second - slower for better visibility
+    speed: 4.5, // cells per second - increased for better flow
     defenderName: defender.name,
     ability: defender.ability || null // Add ability support
   };
@@ -712,7 +726,7 @@ function createProjectile(defender, enemy){
         y: defenderPos.y,
         targetEnemy: additionalEnemy,
         damage: Math.floor(defender.damage * 0.5), // Reduced damage for additional projectiles
-        speed: 3, // Match main projectile speed
+        speed: 4.5, // Match main projectile speed
         defenderName: defender.name,
         ability: null // Additional projectiles don't trigger abilities
       };
@@ -1050,11 +1064,14 @@ function updateUI(){
   gemsEl.textContent = Math.floor(state.gems);
   livesEl.textContent = state.lives;
   
-  // Show wave number with enemy count during active wave
+  // Show wave number with enemy count and progress during active wave
   if(state.isWaveActive && state.enemies.length > 0){
-    waveNumberEl.textContent = `${state.wave} (${state.enemies.length} enemies)`;
+    const totalEnemiesInWave = state.totalEnemiesInWave || state.enemies.length;
+    const remaining = state.enemies.length;
+    const defeated = totalEnemiesInWave - remaining;
+    waveNumberEl.textContent = `${state.wave} 🎯 ${defeated}/${totalEnemiesInWave}`;
   } else {
-    waveNumberEl.textContent = `${state.wave} (${state.defenders.length} defenders)`;
+    waveNumberEl.textContent = `${state.wave}`;
   }
   
   updateBattleGrid();
