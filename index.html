@@ -44,7 +44,10 @@
     </section>
 
     <section id="inventorySection">
-      <h3>Your Pets</h3>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="margin: 0;">Your Pets</h3>
+        <button id="sellAllBtn" class="sell-all-button" title="Sell all pets in inventory for coins">💰 Sell All Pets</button>
+      </div>
       <div id="inventory">
         <!-- JS inserts owned pets -->
       </div>
@@ -61,6 +64,12 @@
     <div class="modal-content">
       <h2>🎲 Pet Gacha</h2>
       <div id="gachaResult"></div>
+      <div style="margin: 16px 0; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <input type="checkbox" id="autoSellCommon" style="width: 18px; height: 18px; cursor: pointer;">
+          <span>Auto-sell common duplicates (keeps one copy)</span>
+        </label>
+      </div>
       <button id="closeGachaBtn">Close</button>
     </div>
   </div>
