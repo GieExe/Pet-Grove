@@ -29,13 +29,23 @@
     <section id="battleSection">
       <div id="waveInfo">
         <h2>Wave <span id="waveNumber">1</span></h2>
-        <div style="display:flex;gap:8px;align-items:center">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <select id="mapSelector" style="padding:8px;border-radius:6px;background:#16213e;color:white;border:1px solid #0f3460">
             <option value="classic">Classic</option>
             <option value="zigzag">Zigzag</option>
             <option value="spiral">Spiral</option>
           </select>
           <button id="startWaveBtn" class="wave-button">▶️ Start Wave</button>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:6px 10px;background:rgba(255,255,255,0.05);border-radius:6px;font-size:0.9rem">
+            <input type="checkbox" id="autoStartWave" style="cursor:pointer">
+            <span>Auto-Start</span>
+          </label>
+          <select id="gameSpeed" style="padding:8px;border-radius:6px;background:#16213e;color:white;border:1px solid #0f3460;font-size:0.9rem" title="Adjust game speed">
+            <option value="1">1x Speed</option>
+            <option value="1.5">1.5x Speed</option>
+            <option value="2">2x Speed</option>
+            <option value="3">3x Speed ⚡</option>
+          </select>
         </div>
       </div>
       <div id="battleGrid">
