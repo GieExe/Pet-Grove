@@ -286,6 +286,13 @@ function save(){
     projectiles: []
   };
   localStorage.setItem('petdefense_state', JSON.stringify(saveState));
+  
+  // Save auto-sell preference
+  const autoSellCheckbox = document.getElementById('autoSellCommon');
+  if(autoSellCheckbox){
+    localStorage.setItem('petdefense_autoSell', autoSellCheckbox.checked);
+  }
+  
   // Show save indicator briefly
   showSaveIndicator();
 }
@@ -392,7 +399,31 @@ function openGacha(){
   
   state.gems -= GACHA_COST;
   const newPet = rollGacha();
-  state.ownedPets.push(newPet);
+  
+  // Check auto-sell setting
+  const autoSellCheckbox = document.getElementById('autoSellCommon');
+  const autoSellEnabled = autoSellCheckbox && autoSellCheckbox.checked;
+  
+  let autoSold = false;
+  let sellValue = 0;
+  
+  // Auto-sell logic: sell common duplicates (keep one copy of each common pet)
+  if(autoSellEnabled && newPet.rarity === 'common'){
+    // Check if we already have this pet type
+    const existingPet = state.ownedPets.find(p => p.id === newPet.id);
+    if(existingPet){
+      // We have a duplicate - auto-sell it
+      sellValue = Math.floor(newPet.cost * 0.5); // 50% of cost for auto-sold pets
+      state.coins += sellValue;
+      autoSold = true;
+      log(`💰 Auto-sold duplicate ${newPet.name} for ${sellValue} coins!`);
+    }
+  }
+  
+  // Only add to inventory if not auto-sold
+  if(!autoSold){
+    state.ownedPets.push(newPet);
+  }
   
   // Track gacha rolls
   if(!state.stats) state.stats = {};
@@ -400,6 +431,11 @@ function openGacha(){
   
   // Show result
   const kgQuality = newPet.kgBonus > 1.2 ? '⭐ HEAVY!' : newPet.kgBonus < 0.9 ? '⚠️ Light' : '✓ Normal';
+  const autoSoldMessage = autoSold ? `<div style="margin-top:12px;padding:8px;background:rgba(255,215,0,0.2);border:1px solid rgba(255,215,0,0.4);border-radius:6px;">
+      <strong>✅ Auto-Sold!</strong><br>
+      Duplicate common pet sold for <strong>${sellValue} coins</strong>
+    </div>` : '';
+  
   gachaResult.innerHTML = `
     <div class="gacha-reveal ${newPet.rarity}">
       <div class="gacha-emoji">${newPet.emoji}</div>
@@ -413,6 +449,7 @@ function openGacha(){
         <div>⚖️ Weight: ${newPet.kg}kg ${kgQuality}</div>
         <div style="font-size:0.85rem;color:#aaa;margin-top:4px">Stats: ${Math.round(newPet.kgBonus * 100)}%</div>
       </div>
+      ${autoSoldMessage}
     </div>
   `;
   
@@ -1254,10 +1291,47 @@ function showStats(){
   statsModal.classList.remove('hidden');
 }
 
+/* --- Sell All Function --- */
+function sellAllPets(){
+  if(state.ownedPets.length === 0){
+    log('⚠️ No pets in inventory to sell!');
+    return;
+  }
+  
+  // Calculate total value
+  let totalValue = 0;
+  state.ownedPets.forEach(pet => {
+    totalValue += Math.floor(pet.cost * 0.5); // 50% of cost
+  });
+  
+  const petCount = state.ownedPets.length;
+  
+  // Confirm sale
+  const confirmed = confirm(`⚠️ SELL ALL PETS?\n\nYou will sell ${petCount} pet${petCount > 1 ? 's' : ''} for ${totalValue} coins.\n\nAll pets will be GONE FOREVER and cannot be recovered.\n\nClick OK to confirm sale.`);
+  
+  if(!confirmed){
+    log('❌ Sell all cancelled');
+    return;
+  }
+  
+  // Sell all pets
+  state.coins += totalValue;
+  state.ownedPets = [];
+  
+  log(`💰 Sold all ${petCount} pet${petCount > 1 ? 's' : ''} for ${totalValue} coins!`);
+  save();
+  updateUI();
+  updateShopAndInventory();
+}
+
 /* --- Event Handlers --- */
 startWaveBtn.addEventListener('click', () => spawnWave());
 gachaBtn.addEventListener('click', () => openGacha());
 closeGachaBtn.addEventListener('click', () => gachaModal.classList.add('hidden'));
+
+// Sell All button
+const sellAllBtn = document.getElementById('sellAllBtn');
+if(sellAllBtn) sellAllBtn.addEventListener('click', () => sellAllPets());
 
 const statsBtn = document.getElementById('statsBtn');
 const statsModal = document.getElementById('statsModal');
@@ -1349,6 +1423,15 @@ function gameLoop(){
 /* --- Init --- */
 function init(){
   load();
+  
+  // Load auto-sell preference
+  const autoSellCheckbox = document.getElementById('autoSellCommon');
+  if(autoSellCheckbox){
+    const savedAutoSell = localStorage.getItem('petdefense_autoSell');
+    if(savedAutoSell !== null){
+      autoSellCheckbox.checked = savedAutoSell === 'true';
+    }
+  }
   
   // Set defaults
   if(state.coins === undefined) state.coins = STARTING_COINS;
