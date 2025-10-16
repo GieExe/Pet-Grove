@@ -98,7 +98,31 @@ const PET_DEFENDERS = [
   { id: 'salamander', emoji: '🦎', name: 'Fire Salamander', cost: 325, damage: 74, range: 2.7, attackSpeed: 1.2, rarity:'epic', description:'Flame thrower', ability:'burn' },
   { id: 'gargoyle', emoji: '🗿', name: 'Stone Gargoyle', cost: 340, damage: 76, range: 2.0, attackSpeed: 1.6, rarity:'epic', description:'Ancient guardian', ability:'splash' },
   { id: 'manticore', emoji: '🦁', name: 'Manticore', cost: 570, damage: 100, range: 2.8, attackSpeed: 0.85, rarity:'legendary', description:'Mythical beast', ability:'poison' },
-  { id: 'thunderbird', emoji: '⚡', name: 'Thunder Bird', cost: 580, damage: 96, range: 3.5, attackSpeed: 0.95, rarity:'legendary', description:'Storm bringer', ability:'stun' }
+  { id: 'thunderbird', emoji: '⚡', name: 'Thunder Bird', cost: 580, damage: 96, range: 3.5, attackSpeed: 0.95, rarity:'legendary', description:'Storm bringer', ability:'stun' },
+  // NEW PETS - More variety and balance
+  { id: 'squirrel', emoji: '🐿️', name: 'Acorn Guard', cost: 60, damage: 20, range: 1.9, attackSpeed: 0.6, rarity:'common', description:'Nimble defender' },
+  { id: 'beaver', emoji: '🦫', name: 'Builder Beaver', cost: 75, damage: 26, range: 1.5, attackSpeed: 1.0, rarity:'common', description:'Construction expert', ability:'stun' },
+  { id: 'seal', emoji: '🦭', name: 'Arctic Seal', cost: 80, damage: 28, range: 2.0, attackSpeed: 0.9, rarity:'common', description:'Cold defender', ability:'slow' },
+  { id: 'duck', emoji: '🦆', name: 'Quack Warrior', cost: 65, damage: 22, range: 2.2, attackSpeed: 0.7, rarity:'common', description:'Feathered fighter' },
+  { id: 'skunk', emoji: '🦨', name: 'Toxic Skunk', cost: 95, damage: 30, range: 2.4, attackSpeed: 1.0, rarity:'common', description:'Smelly defender', ability:'poison' },
+  { id: 'armadillo', emoji: '🦔', name: 'Tank Armadillo', cost: 100, damage: 35, range: 1.2, attackSpeed: 1.5, rarity:'common', description:'Armored defender' },
+  { id: 'bison', emoji: '🦬', name: 'Thunder Bison', cost: 180, damage: 50, range: 1.6, attackSpeed: 1.4, rarity:'rare', description:'Stampeding force', ability:'stun' },
+  { id: 'raccoondog', emoji: '🦝', name: 'Shadow Tanuki', cost: 175, damage: 43, range: 2.3, attackSpeed: 0.8, rarity:'rare', description:'Mystical trickster', ability:'multishot' },
+  { id: 'okapi', emoji: '🦓', name: 'Forest Okapi', cost: 170, damage: 40, range: 2.5, attackSpeed: 0.9, rarity:'rare', description:'Rare forest dweller' },
+  { id: 'pangolin', emoji: '🦡', name: 'Scale Guardian', cost: 185, damage: 48, range: 1.4, attackSpeed: 1.3, rarity:'rare', description:'Scaled protector', ability:'splash' },
+  { id: 'anteater', emoji: '🐜', name: 'Giant Anteater', cost: 165, damage: 38, range: 1.8, attackSpeed: 1.1, rarity:'rare', description:'Long tongue striker' },
+  { id: 'tapir', emoji: '🦌', name: 'Dream Tapir', cost: 190, damage: 45, range: 2.1, attackSpeed: 1.0, rarity:'rare', description:'Dream eater', ability:'slow' },
+  { id: 'basilisk', emoji: '🐍', name: 'Basilisk', cost: 335, damage: 80, range: 2.9, attackSpeed: 1.1, rarity:'epic', description:'Legendary serpent', ability:'poison' },
+  { id: 'wyvern', emoji: '🐉', name: 'Wyvern', cost: 345, damage: 82, range: 3.4, attackSpeed: 1.0, rarity:'epic', description:'Lesser dragon', ability:'burn' },
+  { id: 'sphinx', emoji: '🦁', name: 'Sphinx', cost: 350, damage: 78, range: 2.5, attackSpeed: 1.2, rarity:'epic', description:'Riddle keeper', ability:'stun' },
+  { id: 'banshee', emoji: '👻', name: 'Wailing Banshee', cost: 330, damage: 75, range: 3.0, attackSpeed: 0.9, rarity:'epic', description:'Soul screamer', ability:'slow' },
+  { id: 'gorgon', emoji: '🐍', name: 'Gorgon', cost: 355, damage: 84, range: 2.6, attackSpeed: 1.3, rarity:'epic', description:'Stone gaze', ability:'stun' },
+  // NEW MYTHIC RARITY - Ultra rare and powerful
+  { id: 'celestialdragon', emoji: '🌟', name: 'Celestial Dragon', cost: 800, damage: 150, range: 4.0, attackSpeed: 0.7, rarity:'mythic', description:'Divine sky ruler', ability:'splash' },
+  { id: 'worldtree', emoji: '🌳', name: 'World Tree', cost: 850, damage: 130, range: 3.8, attackSpeed: 1.0, rarity:'mythic', description:'Ancient life giver', ability:'lifesteal' },
+  { id: 'leviathan', emoji: '🐋', name: 'Leviathan', cost: 900, damage: 160, range: 3.2, attackSpeed: 0.9, rarity:'mythic', description:'Ocean titan', ability:'splash' },
+  { id: 'archphoenix', emoji: '🔥', name: 'Arch Phoenix', cost: 880, damage: 145, range: 4.2, attackSpeed: 0.6, rarity:'mythic', description:'Eternal flame', ability:'burn' },
+  { id: 'voidbeast', emoji: '🌑', name: 'Void Beast', cost: 950, damage: 170, range: 3.5, attackSpeed: 0.8, rarity:'mythic', description:'Darkness incarnate', ability:'multishot' }
 ];
 
 const ENEMY_TYPES = [
@@ -120,12 +144,13 @@ const ENEMY_TYPES = [
   { id: 'golem', emoji: '🗿', name: 'Stone Golem', hp: 350, speed: 0.5, reward: 90, gems: 8 }
 ];
 
-// Gacha rarities and rates - Adjusted for better balance
+// Gacha rarities and rates - Adjusted with new MYTHIC tier
 const GACHA_RATES = {
-  common: 0.65,     // 65% - Increased slightly
-  rare: 0.22,       // 22% - Reduced slightly  
-  epic: 0.10,       // 10% - Reduced for more value
-  legendary: 0.03   // 3% - Kept rare as legendary should be
+  common: 0.62,     // 62% - Slightly reduced for mythic
+  rare: 0.23,       // 23% - Increased slightly  
+  epic: 0.11,       // 11% - Increased slightly
+  legendary: 0.035, // 3.5% - Increased slightly
+  mythic: 0.005     // 0.5% - Ultra rare new tier!
 };
 
 /* --- DOM refs --- */
@@ -149,6 +174,7 @@ let state = {
   lives: STARTING_LIVES,
   wave: 1,
   isWaveActive: false,
+  isPaused: false, // NEW: Pause state
   cells: [], // grid cells for tower placement
   defenders: [], // placed defenders
   enemies: [], // active enemies
@@ -158,6 +184,7 @@ let state = {
   enemyIdCounter: 0,
   lastTick: Date.now(),
   selectedMap: 'classic', // Current map selection
+  gameSpeed: 1, // Game speed multiplier (1x, 1.5x, 2x, 3x)
   stats: { // Game statistics
     totalEnemiesDefeated: 0,
     totalDamageDealt: 0,
@@ -338,6 +365,7 @@ function generatePetKg(rarity){
     case 'rare': baseKg = 20; variance = 10; break;
     case 'epic': baseKg = 40; variance = 20; break;
     case 'legendary': baseKg = 80; variance = 40; break;
+    case 'mythic': baseKg = 150; variance = 75; break; // NEW MYTHIC tier!
     default: baseKg = 10; variance = 5;
   }
   
@@ -354,6 +382,7 @@ function getKgBonus(kg, rarity){
     case 'rare': multiplier = kg / 20; break;
     case 'epic': multiplier = kg / 40; break;
     case 'legendary': multiplier = kg / 80; break;
+    case 'mythic': multiplier = kg / 150; break; // NEW MYTHIC tier!
     default: multiplier = 1;
   }
   return Math.max(0.8, Math.min(1.5, multiplier)); // 80% to 150% stats
@@ -465,8 +494,16 @@ function spawnWave(){
   if(state.isWaveActive) return;
   
   state.isWaveActive = true;
+  state.isPaused = false;
   startWaveBtn.disabled = true;
   startWaveBtn.textContent = '⏳ Wave In Progress...';
+  
+  // Show pause button
+  const pauseBtn = document.getElementById('pauseBtn');
+  if(pauseBtn){
+    pauseBtn.style.display = 'inline-block';
+    pauseBtn.textContent = '⏸️ Pause';
+  }
   
   // Calculate enemies for this wave
   const baseEnemies = 5 + state.wave * 2;
@@ -569,6 +606,7 @@ function updateEnemies(deltaTime){
 
 function completeWave(){
   state.isWaveActive = false;
+  state.isPaused = false;
   state.wave++;
   
   const coinReward = 80 + state.wave * 15;
@@ -587,7 +625,22 @@ function completeWave(){
   
   startWaveBtn.disabled = false;
   startWaveBtn.textContent = '▶️ Start Next Wave';
+  
+  // Hide pause button
+  const pauseBtn = document.getElementById('pauseBtn');
+  if(pauseBtn) pauseBtn.style.display = 'none';
+  
   save();
+  
+  // Auto-start next wave if enabled
+  const autoStartCheckbox = document.getElementById('autoStartWave');
+  if(autoStartCheckbox && autoStartCheckbox.checked){
+    setTimeout(() => {
+      if(!state.isWaveActive){ // Double check wave isn't already active
+        spawnWave();
+      }
+    }, 2000); // 2 second delay before auto-starting next wave
+  }
 }
 
 /* --- Ability System --- */
@@ -732,18 +785,27 @@ function updateDefenders(deltaTime){
   });
 }
 
-// Create projectile from defender to enemy
+// Create projectile from defender to enemy - OVERHAULED for smooth, slow animation
 function createProjectile(defender, enemy){
+  // Get exact defender position (tower icon center)
   const defenderPos = getCellCenter(defender.row, defender.col);
+  
+  // Get exact enemy position (enemy icon center)
+  const enemyPos = { x: enemy.position.col + 0.5, y: enemy.position.row + 0.5 };
+  
   const projectile = {
     id: Date.now() + Math.random(),
     x: defenderPos.x,
     y: defenderPos.y,
     targetEnemy: enemy,
+    targetX: enemyPos.x, // Store initial target position for smoother tracking
+    targetY: enemyPos.y,
     damage: defender.damage,
-    speed: 4.5, // cells per second - increased for better flow
+    speed: 2.8, // cells per second - REDUCED for slower, more visible projectiles
     defenderName: defender.name,
-    ability: defender.ability || null // Add ability support
+    ability: defender.ability || null, // Add ability support
+    startTime: Date.now(), // Track projectile lifetime for effects
+    defenderEmoji: defender.emoji // Store defender emoji for visual variety
   };
   state.projectiles.push(projectile);
   
@@ -757,22 +819,27 @@ function createProjectile(defender, enemy){
     }).slice(0, 2); // Up to 2 additional targets
     
     nearbyEnemies.forEach(additionalEnemy => {
+      const additionalEnemyPos = { x: additionalEnemy.position.col + 0.5, y: additionalEnemy.position.row + 0.5 };
       const additionalProj = {
         id: Date.now() + Math.random(),
         x: defenderPos.x,
         y: defenderPos.y,
         targetEnemy: additionalEnemy,
+        targetX: additionalEnemyPos.x,
+        targetY: additionalEnemyPos.y,
         damage: Math.floor(defender.damage * 0.5), // Reduced damage for additional projectiles
-        speed: 4.5, // Match main projectile speed
+        speed: 2.8, // Match main projectile speed
         defenderName: defender.name,
-        ability: null // Additional projectiles don't trigger abilities
+        ability: null, // Additional projectiles don't trigger abilities
+        startTime: Date.now(),
+        defenderEmoji: defender.emoji
       };
       state.projectiles.push(additionalProj);
     });
   }
 }
 
-// Update projectiles - improved accuracy with predictive targeting
+// Update projectiles - OVERHAULED for smooth, slow, accurate tracking
 function updateProjectiles(deltaTime){
   const toRemove = [];
   
@@ -782,19 +849,24 @@ function updateProjectiles(deltaTime){
       return;
     }
     
-    // Get current target position
+    // Get current enemy position for smooth tracking
     const targetPos = { x: proj.targetEnemy.position.col + 0.5, y: proj.targetEnemy.position.row + 0.5 };
+    
+    // Calculate direction vector with smooth interpolation
     const dx = targetPos.x - proj.x;
     const dy = targetPos.y - proj.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
     
-    // More generous hit detection for better accuracy
-    if(dist < 0.3){
-      // Hit the target - create impact effect
+    // Smoother hit detection - more generous for slow projectiles
+    if(dist < 0.35){
+      // Hit the target - create impact effect at exact position
       createImpactEffect(proj.x, proj.y);
       
       // Apply damage
       proj.targetEnemy.hp -= proj.damage;
+      
+      // Create floating damage text
+      createFloatingText(targetPos.x, targetPos.y, `-${proj.damage}`, '#ff6b6b');
       
       // Track damage dealt
       if(!state.stats) state.stats = {};
@@ -817,12 +889,24 @@ function updateProjectiles(deltaTime){
       }
       toRemove.push(proj.id);
     } else {
-      // Move toward target with improved tracking
+      // Smooth movement toward target with gentle easing
       const moveDistance = proj.speed * deltaTime;
-      // Normalize direction and move
+      
+      // Add slight homing behavior for better tracking
+      const homingFactor = 0.95; // 95% direct tracking, 5% momentum
+      
+      // Calculate normalized direction
       const normalizedSpeed = Math.min(moveDistance, dist); // Don't overshoot
-      proj.x += (dx / dist) * normalizedSpeed;
-      proj.y += (dy / dist) * normalizedSpeed;
+      const moveX = (dx / dist) * normalizedSpeed * homingFactor;
+      const moveY = (dy / dist) * normalizedSpeed * homingFactor;
+      
+      // Update projectile position smoothly
+      proj.x += moveX;
+      proj.y += moveY;
+      
+      // Store velocity for potential visual effects
+      proj.velocityX = moveX / deltaTime;
+      proj.velocityY = moveY / deltaTime;
     }
   });
   
@@ -922,7 +1006,7 @@ function updateBattleGrid() {
       // Calculate visual size based on kg
       const kgScale = cell.defender.kg ? 1 + (cell.defender.kgBonus - 1) * 0.5 : 1; // Scale emoji size
       const kgInfo = cell.defender.kg ? `<div class="info-line">⚖️ ${cell.defender.kg}kg</div>` : '';
-      const rarityColors = {common: '#95a5a6', rare: '#3498db', epic: '#9b59b6', legendary: '#f39c12'};
+      const rarityColors = {common: '#95a5a6', rare: '#3498db', epic: '#9b59b6', legendary: '#f39c12', mythic: '#ff1493'};
       const rarityColor = rarityColors[cell.defender.rarity] || '#95a5a6';
       
       el.innerHTML = `
@@ -1109,6 +1193,20 @@ function updateUI(){
     waveNumberEl.textContent = `${state.wave} 🎯 ${defeated}/${totalEnemiesInWave}`;
   } else {
     waveNumberEl.textContent = `${state.wave}`;
+  }
+  
+  // Show/hide pause overlay
+  let pauseOverlay = document.getElementById('pauseOverlay');
+  if(state.isPaused && state.isWaveActive){
+    if(!pauseOverlay){
+      pauseOverlay = document.createElement('div');
+      pauseOverlay.id = 'pauseOverlay';
+      pauseOverlay.className = 'pause-overlay';
+      pauseOverlay.innerHTML = '⏸️ PAUSED<br><small style="font-size:0.5em;font-weight:400">Press P to Resume</small>';
+      document.body.appendChild(pauseOverlay);
+    }
+  } else if(pauseOverlay){
+    pauseOverlay.remove();
   }
   
   updateBattleGrid();
@@ -1324,10 +1422,24 @@ function sellAllPets(){
   updateShopAndInventory();
 }
 
+/* --- Pause/Resume Function --- */
+function togglePause(){
+  state.isPaused = !state.isPaused;
+  const pauseBtn = document.getElementById('pauseBtn');
+  if(pauseBtn){
+    pauseBtn.textContent = state.isPaused ? '▶️ Resume' : '⏸️ Pause';
+  }
+  log(state.isPaused ? '⏸️ Game paused' : '▶️ Game resumed');
+}
+
 /* --- Event Handlers --- */
 startWaveBtn.addEventListener('click', () => spawnWave());
 gachaBtn.addEventListener('click', () => openGacha());
 closeGachaBtn.addEventListener('click', () => gachaModal.classList.add('hidden'));
+
+// Pause button
+const pauseBtn = document.getElementById('pauseBtn');
+if(pauseBtn) pauseBtn.addEventListener('click', () => togglePause());
 
 // Sell All button
 const sellAllBtn = document.getElementById('sellAllBtn');
@@ -1368,6 +1480,16 @@ mapSelector.addEventListener('change', (e) => {
   save();
 });
 
+// Game speed selector
+const gameSpeedSelector = document.getElementById('gameSpeed');
+if(gameSpeedSelector){
+  gameSpeedSelector.addEventListener('change', (e) => {
+    state.gameSpeed = parseFloat(e.target.value);
+    log(`⚡ Game speed set to ${state.gameSpeed}x`);
+    save();
+  });
+}
+
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
   // Space or Enter to start wave
@@ -1382,6 +1504,10 @@ document.addEventListener('keydown', (e) => {
   // S for stats
   if((e.key === 's' || e.key === 'S') && gachaModal.classList.contains('hidden') && statsModal.classList.contains('hidden')){
     showStats();
+  }
+  // P for pause/resume
+  if((e.key === 'p' || e.key === 'P') && state.isWaveActive && gachaModal.classList.contains('hidden') && statsModal.classList.contains('hidden')){
+    togglePause();
   }
   // Escape to close modals
   if(e.key === 'Escape'){
@@ -1403,14 +1529,17 @@ let last = Date.now();
 function gameLoop(){
   const now = Date.now();
   const deltaMs = now - last;
-  const deltaSec = deltaMs / 1000;
+  const deltaSec = (deltaMs / 1000) * state.gameSpeed; // Apply game speed multiplier
   
   if(deltaMs >= TICK_INTERVAL){
-    if(state.isWaveActive){
+    if(state.isWaveActive && !state.isPaused){ // Only update when not paused
       updateEnemies(deltaSec);
       updateDefenders(deltaSec);
       updateProjectiles(deltaSec);
       // Only update UI during active wave for better performance
+      updateUI();
+    } else if(state.isWaveActive && state.isPaused){
+      // Still render but don't update game logic
       updateUI();
     }
     
@@ -1439,6 +1568,7 @@ function init(){
   if(state.lives === undefined) state.lives = STARTING_LIVES;
   if(state.wave === undefined) state.wave = 1;
   if(state.selectedMap === undefined) state.selectedMap = 'classic';
+  if(state.gameSpeed === undefined) state.gameSpeed = 1;
   
   // Set the path based on selected map
   PATH = MAPS[state.selectedMap];
@@ -1446,6 +1576,10 @@ function init(){
   // Update map selector
   const mapSelector = document.getElementById('mapSelector');
   if(mapSelector) mapSelector.value = state.selectedMap;
+  
+  // Update game speed selector
+  const gameSpeedSelector = document.getElementById('gameSpeed');
+  if(gameSpeedSelector) gameSpeedSelector.value = state.gameSpeed;
   
   // Initialize grid
   if(!state.cells || state.cells.length === 0){
