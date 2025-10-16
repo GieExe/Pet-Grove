@@ -24,6 +24,12 @@
       </div>
       <button id="gachaBtn" class="gacha-button">🎲 Pet Gacha (40 gems)</button>
       <button id="statsBtn" class="stats-button">📊 Statistics</button>
+      <div style="margin-top:12px;padding:8px;background:rgba(255,255,255,0.03);border-radius:6px;font-size:0.75rem;color:#aaa">
+        <div style="margin-bottom:4px;font-weight:600;color:#fff">Drop Rates:</div>
+        <div>Common: 62% | Rare: 23%</div>
+        <div>Epic: 11% | Legendary: 3.5%</div>
+        <div style="color:#ff1493">✨ Mythic: 0.5%</div>
+      </div>
     </section>
 
     <section id="battleSection">
@@ -36,6 +42,7 @@
             <option value="spiral">Spiral</option>
           </select>
           <button id="startWaveBtn" class="wave-button">▶️ Start Wave</button>
+          <button id="pauseBtn" class="wave-button" style="background:#f39c12;display:none">⏸️ Pause</button>
           <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:6px 10px;background:rgba(255,255,255,0.05);border-radius:6px;font-size:0.9rem">
             <input type="checkbox" id="autoStartWave" style="cursor:pointer">
             <span>Auto-Start</span>
@@ -96,7 +103,7 @@
   <footer>
     <small>Pet Defense — Deploy pets to defend against waves of enemies! Progress saves automatically.</small>
     <small style="display:block;margin-top:8px;color:#888;">
-      💡 Hover over defenders to see stats and controls | ⬆️ Upgrade | 🔄 Move | 💰 Sell | Shortcuts: Space/Enter=Start Wave, G=Gacha, S=Stats, Esc=Close
+      💡 Hover over defenders to see stats and controls | ⬆️ Upgrade | 🔄 Move | 💰 Sell | Shortcuts: Space/Enter=Start, G=Gacha, S=Stats, P=Pause, Esc=Close
     </small>
   </footer>
 

@@ -174,6 +174,7 @@ let state = {
   lives: STARTING_LIVES,
   wave: 1,
   isWaveActive: false,
+  isPaused: false, // NEW: Pause state
   cells: [], // grid cells for tower placement
   defenders: [], // placed defenders
   enemies: [], // active enemies
@@ -493,8 +494,16 @@ function spawnWave(){
   if(state.isWaveActive) return;
   
   state.isWaveActive = true;
+  state.isPaused = false;
   startWaveBtn.disabled = true;
   startWaveBtn.textContent = '⏳ Wave In Progress...';
+  
+  // Show pause button
+  const pauseBtn = document.getElementById('pauseBtn');
+  if(pauseBtn){
+    pauseBtn.style.display = 'inline-block';
+    pauseBtn.textContent = '⏸️ Pause';
+  }
   
   // Calculate enemies for this wave
   const baseEnemies = 5 + state.wave * 2;
@@ -597,6 +606,7 @@ function updateEnemies(deltaTime){
 
 function completeWave(){
   state.isWaveActive = false;
+  state.isPaused = false;
   state.wave++;
   
   const coinReward = 80 + state.wave * 15;
@@ -615,6 +625,11 @@ function completeWave(){
   
   startWaveBtn.disabled = false;
   startWaveBtn.textContent = '▶️ Start Next Wave';
+  
+  // Hide pause button
+  const pauseBtn = document.getElementById('pauseBtn');
+  if(pauseBtn) pauseBtn.style.display = 'none';
+  
   save();
   
   // Auto-start next wave if enabled
@@ -1180,6 +1195,20 @@ function updateUI(){
     waveNumberEl.textContent = `${state.wave}`;
   }
   
+  // Show/hide pause overlay
+  let pauseOverlay = document.getElementById('pauseOverlay');
+  if(state.isPaused && state.isWaveActive){
+    if(!pauseOverlay){
+      pauseOverlay = document.createElement('div');
+      pauseOverlay.id = 'pauseOverlay';
+      pauseOverlay.className = 'pause-overlay';
+      pauseOverlay.innerHTML = '⏸️ PAUSED<br><small style="font-size:0.5em;font-weight:400">Press P to Resume</small>';
+      document.body.appendChild(pauseOverlay);
+    }
+  } else if(pauseOverlay){
+    pauseOverlay.remove();
+  }
+  
   updateBattleGrid();
   renderEnemies();
 }
@@ -1393,10 +1422,24 @@ function sellAllPets(){
   updateShopAndInventory();
 }
 
+/* --- Pause/Resume Function --- */
+function togglePause(){
+  state.isPaused = !state.isPaused;
+  const pauseBtn = document.getElementById('pauseBtn');
+  if(pauseBtn){
+    pauseBtn.textContent = state.isPaused ? '▶️ Resume' : '⏸️ Pause';
+  }
+  log(state.isPaused ? '⏸️ Game paused' : '▶️ Game resumed');
+}
+
 /* --- Event Handlers --- */
 startWaveBtn.addEventListener('click', () => spawnWave());
 gachaBtn.addEventListener('click', () => openGacha());
 closeGachaBtn.addEventListener('click', () => gachaModal.classList.add('hidden'));
+
+// Pause button
+const pauseBtn = document.getElementById('pauseBtn');
+if(pauseBtn) pauseBtn.addEventListener('click', () => togglePause());
 
 // Sell All button
 const sellAllBtn = document.getElementById('sellAllBtn');
@@ -1462,6 +1505,10 @@ document.addEventListener('keydown', (e) => {
   if((e.key === 's' || e.key === 'S') && gachaModal.classList.contains('hidden') && statsModal.classList.contains('hidden')){
     showStats();
   }
+  // P for pause/resume
+  if((e.key === 'p' || e.key === 'P') && state.isWaveActive && gachaModal.classList.contains('hidden') && statsModal.classList.contains('hidden')){
+    togglePause();
+  }
   // Escape to close modals
   if(e.key === 'Escape'){
     if(!gachaModal.classList.contains('hidden')){
@@ -1485,11 +1532,14 @@ function gameLoop(){
   const deltaSec = (deltaMs / 1000) * state.gameSpeed; // Apply game speed multiplier
   
   if(deltaMs >= TICK_INTERVAL){
-    if(state.isWaveActive){
+    if(state.isWaveActive && !state.isPaused){ // Only update when not paused
       updateEnemies(deltaSec);
       updateDefenders(deltaSec);
       updateProjectiles(deltaSec);
       // Only update UI during active wave for better performance
+      updateUI();
+    } else if(state.isWaveActive && state.isPaused){
+      // Still render but don't update game logic
       updateUI();
     }
     
