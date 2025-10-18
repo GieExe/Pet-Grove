@@ -595,16 +595,37 @@ section{
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  transition:left 0.08s linear, top 0.08s linear;
   z-index:10;
   pointer-events:none;
-  will-change:left, top;
+  will-change:transform;
+  transform-origin: 0 0; /* top-left so translate3d positions correctly */
 }
 
 .enemy-emoji{
   font-size:28px;
   filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));
   animation:enemy-walk 0.6s ease-in-out infinite;
+}
+
+/* When Phaser overlay is active, hide DOM enemy/projectile visuals (Phaser will render them) */
+.phaser-active .enemy, .phaser-active .projectile, .phaser-active .enemy-emoji{
+  display:none !important;
+}
+
+/* Temporary hitbox overlay for debugging enemy hit area. Remove when no longer needed. */
+.enemy-hitbox{
+  position:absolute;
+  /* Small box roughly matching the emoji/icon size and centered */
+  width:36px;
+  height:36px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%);
+  border:1.5px dashed rgba(255,0,0,0.95);
+  background:rgba(255,0,0,0.06);
+  border-radius:6px;
+  pointer-events:none;
+  z-index:12;
 }
 
 /* Smooth walking animation for enemies */
@@ -627,18 +648,21 @@ section{
 }
 
 .enemy-hp{
-  width:100%;
-  height:4px;
-  background:rgba(0,0,0,0.5);
-  border-radius:2px;
-  overflow:hidden;
-  margin-top:2px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  margin-top:6px;
 }
 
-.enemy-hp-bar{
-  height:100%;
-  background:linear-gradient(90deg, #e74c3c, #c0392b);
-  transition:width 0.2s;
+.enemy-hp-text{
+  background:rgba(0,0,0,0.6);
+  padding:2px 6px;
+  border-radius:6px;
+  font-size:12px;
+  color:#fff;
+  font-weight:700;
+  box-shadow:0 2px 6px rgba(0,0,0,0.6);
 }
 
 .projectile{
@@ -649,12 +673,27 @@ section{
   display:flex;
   align-items:center;
   justify-content:center;
-  transition:left 0.03s linear, top 0.03s linear;
   z-index:5;
   pointer-events:none;
   filter:drop-shadow(0 0 8px rgba(255,215,0,1)) drop-shadow(0 0 16px rgba(255,165,0,0.8)) drop-shadow(0 0 20px rgba(255,100,0,0.4));
   animation:projectile-glow 0.4s ease-in-out infinite alternate, projectile-spin 0.8s linear infinite;
-  will-change:left, top;
+  will-change:transform;
+  transform-origin: 0 0;
+}
+
+/* Debug hitbox for projectiles */
+.projectile-hitbox{
+  position:absolute;
+  width:18px;
+  height:18px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:rgba(0,255,0,0.12);
+  border:1px solid rgba(0,255,0,0.6);
+  pointer-events:none;
+  z-index:3;
 }
 
 /* Improved projectile glow with stronger effects */
