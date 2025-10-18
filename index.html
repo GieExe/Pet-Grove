@@ -153,5 +153,38 @@
   </footer>
 
   <script type="module" src="script.js"></script>
+  <script>
+    // Error handler for module loading issues
+    window.addEventListener('error', (e) => {
+      // Check both e.message and e.error?.message for broader browser compatibility
+      const errorMessage = e.message || e.error?.message || '';
+      if (errorMessage.includes('Failed to resolve module specifier') || 
+          errorMessage.includes('Cannot resolve module')) {
+        const authModal = document.getElementById('authModal');
+        const authForm = document.getElementById('authForm');
+        if (authModal && authForm) {
+          authForm.innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+              <h3 style="color: #e74c3c; margin-bottom: 16px;">⚠️ Setup Required</h3>
+              <p style="margin-bottom: 16px; line-height: 1.6;">
+                This game requires a development server to run properly.
+              </p>
+              <div style="text-align: left; background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                <strong style="display: block; margin-bottom: 8px;">To run the game:</strong>
+                <ol style="margin: 0; padding-left: 20px; line-height: 1.8;">
+                  <li>Install dependencies: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">npm install</code></li>
+                  <li>Start dev server: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">npm run dev</code></li>
+                  <li>Open browser to <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">http://localhost:5173</code></li>
+                </ol>
+              </div>
+              <p style="font-size: 0.9rem; color: #aaa;">
+                See README.md for detailed setup instructions.
+              </p>
+            </div>
+          `;
+        }
+      }
+    });
+  </script>
 </body>
 </html>

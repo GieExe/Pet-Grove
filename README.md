@@ -35,20 +35,55 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 
 ## How to Run
 
-### Option 1: Development Server (Recommended)
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Start dev server: `npm run dev`
-4. Open browser to `http://localhost:5173`
-5. Build for production: `npm run build`
+⚠️ **IMPORTANT**: This application uses ES modules and **cannot** be run by simply opening `index.html` directly in your browser. You must use one of the methods below.
 
-**Note**: The development server is required for the Supabase authentication features to work properly. Opening `index.html` directly in a browser will result in module import errors.
+### Option 1: Development Server (Recommended)
+```bash
+# Clone the repository
+git clone <repository-url>
+cd Pet-Grove
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
+# Open your browser to http://localhost:5173
+```
+
+**Why use the dev server?**
+- Proper ES module resolution for `@supabase/supabase-js`
+- Hot module reloading for faster development
+- Supabase authentication features work correctly
+- No CORS issues
 
 ### Option 2: Production Build
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Build the project: `npm run build`
-4. Serve the `dist` folder using any web server
+```bash
+# Install dependencies
+npm install
+
+# Build the project
+npm run build
+
+# Serve the dist folder (choose one):
+# Using Python 3:
+cd dist && python3 -m http.server 8000
+
+# Using Node.js http-server:
+npx http-server dist
+
+# Or deploy the dist folder to any static hosting service
+# (Netlify, Vercel, GitHub Pages, etc.)
+```
+
+### Troubleshooting
+
+**Problem**: Opening `index.html` directly shows "Setup Required" error  
+**Solution**: This is expected! Follow the instructions in Option 1 or 2 above.
+
+**Problem**: "Failed to resolve module specifier" error  
+**Solution**: You must use a development server or build the project. ES modules cannot be loaded directly from the file system.
 
 ## Authentication & Data Persistence
 
