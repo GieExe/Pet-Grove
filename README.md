@@ -35,17 +35,62 @@ A tower defense game featuring adorable pets as defenders! Deploy pet defenders 
 
 ## How to Run
 
-### Option 1: Direct Browser (Simple)
-1. Clone or download the repository
-2. Open `index.html` in a modern browser
-3. Play! Progress is saved automatically
-
-### Option 2: Development Server (Recommended)
+### Option 1: Development Server (Recommended)
 1. Clone the repository
 2. Install dependencies: `npm install`
 3. Start dev server: `npm run dev`
 4. Open browser to `http://localhost:5173`
 5. Build for production: `npm run build`
+
+**Note**: The development server is required for the Supabase authentication features to work properly. Opening `index.html` directly in a browser will result in module import errors.
+
+### Option 2: Production Build
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Build the project: `npm run build`
+4. Serve the `dist` folder using any web server
+
+## Authentication & Data Persistence
+
+The game now features a complete authentication system powered by Supabase:
+
+### Features
+- 👤 **User Registration** - Create an account with username and password
+- 🔐 **Secure Login** - Password hashing using SHA-256 (client-side)
+- 👤 **Guest Mode** - Play without an account (uses localStorage)
+- 💾 **Cloud Save** - Registered users' progress is saved to Supabase
+- 🔄 **Cross-Device Sync** - Access your account from any device
+
+### Setup Database
+
+To enable authentication features:
+
+1. Create a free Supabase account at https://supabase.com
+2. Create a new project
+3. Run the SQL schema from `DATABASE_SCHEMA.md` in your Supabase SQL Editor
+4. Copy your project's URL and anon key
+5. Update `SUPABASE_URL` and `SUPABASE_ANON_KEY` in `script.js`
+
+See `DATABASE_SCHEMA.md` for detailed database setup instructions.
+
+### Security Notes
+
+- Passwords are hashed using SHA-256 before being sent to the database
+- For production use, consider using Supabase Auth or implementing bcrypt server-side
+- Never commit your Supabase API keys to version control
+- The current implementation is suitable for learning/development purposes
+
+### Playing the Game
+
+**With Account:**
+1. Register a new account or login with existing credentials
+2. Your progress (coins, gems, pets, wave) is saved to the cloud
+3. Access your progress from any device
+
+**As Guest:**
+1. Click "Continue as Guest"
+2. Progress is saved locally using localStorage
+3. Data is device-specific
 
 ## Game Mechanics
 
