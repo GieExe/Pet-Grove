@@ -1181,193 +1181,24 @@ async function showAuthModal(){
   errorEl.classList.add('hidden');
   errorEl.textContent = '';
 }
-
+// Delegator to the refactored Auth module
 async function handleLogin(){
-  const username = document.getElementById('authUsername').value.trim();
-  const password = document.getElementById('authPassword').value;
-  const errorEl = document.getElementById('authError');
-  const loginBtn = document.getElementById('loginBtn');
-  
-  // Validation
-  if(!username || !password){
-    errorEl.textContent = '⚠️ Please enter both username and password';
-    errorEl.classList.remove('hidden');
-    return;
+  if(Auth && typeof Auth.handleLogin === 'function'){
+    return Auth.handleLogin();
   }
-  
-  // Disable button during login
-  loginBtn.disabled = true;
-  loginBtn.textContent = 'Logging in...';
-  
-  try {
-    // Hash the password
-    const passwordHash = await hashPassword(password);
-    
-    // Query for user
-    const { data: users, error: queryError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('username', username)
-      .single();
-    
-    if(queryError || !users){
-      errorEl.textContent = '❌ Invalid username or password';
-      errorEl.classList.remove('hidden');
-      loginBtn.disabled = false;
-      loginBtn.textContent = 'Login';
-      return;
-    }
-    
-    // Check password hash
-    if(users.password !== passwordHash){
-      errorEl.textContent = '❌ Invalid username or password';
-      errorEl.classList.remove('hidden');
-      loginBtn.disabled = false;
-      loginBtn.textContent = 'Login';
-      return;
-    }
-    
-    // Update last login
-    await supabase
-      .from('users')
-      .update({ last_login: new Date().toISOString() })
-      .eq('user_id', users.user_id);
-    
-    // Load user data
-    currentUser = users;
-    isGuest = false;
-    // Clear local-only inventory/defenders to avoid mixing guest/local items with account data
-    state.ownedPets = [];
-    state.defenders = [];
-    state.selectedDefender = null;
-    // Clear any placed defenders in cells
-    if(state.cells && state.cells.length > 0){
-      state.cells.forEach(c => c.defender = null);
-    }
-
-  await persistenceLoadUserData(currentUser, UI.showErrorToast, UI.showInfoToast, UI.updateShopAndInventory);
-    // Ensure selected map is applied and grid refreshed after loading user data
-    PATH = MAPS[state.selectedMap] || MAPS.classic;
-    initCells();
-    createBattleGrid();
-    updateUI();
-    
-    document.getElementById('authModal').classList.add('hidden');
-    document.getElementById('authUsername').value = '';
-    document.getElementById('authPassword').value = '';
-    log(`✅ Welcome back, ${username}!`);
-    
-    loginBtn.disabled = false;
-    loginBtn.textContent = 'Login';
-  } catch(err){
-    console.error('Login error:', err);
-    errorEl.textContent = `❌ Login failed: ${err.message || 'Please try again'}`;
-    errorEl.classList.remove('hidden');
-    loginBtn.disabled = false;
-    loginBtn.textContent = 'Login';
-  }
+  console.warn('Auth.handleLogin not available');
 }
 
 async function handleRegister(){
-  const username = document.getElementById('authUsername').value.trim();
-  const password = document.getElementById('authPassword').value;
-  const errorEl = document.getElementById('authError');
-  const registerBtn = document.getElementById('registerBtn');
-  
-  // Validation
-  if(!username || !password){
-    errorEl.textContent = '⚠️ Please enter both username and password';
-    errorEl.classList.remove('hidden');
-    return;
+  // Delegate to Auth module
+  if(Auth && typeof Auth.handleRegister === 'function'){
+    return Auth.handleRegister();
   }
-  
-  if(username.length < 3){
-    errorEl.textContent = '⚠️ Username must be at least 3 characters';
-    errorEl.classList.remove('hidden');
-    return;
-  }
-  
-  if(password.length < 6){
-    errorEl.textContent = '⚠️ Password must be at least 6 characters';
-    errorEl.classList.remove('hidden');
-    return;
-  }
-  
-  // Additional validation for username (alphanumeric and underscores only)
-  if(!/^[a-zA-Z0-9_]+$/.test(username)){
-    errorEl.textContent = '⚠️ Username can only contain letters, numbers, and underscores';
-    errorEl.classList.remove('hidden');
-    return;
-  }
-  
-  // Disable button during registration
-  registerBtn.disabled = true;
-  registerBtn.textContent = 'Creating account...';
-  
-  try {
-    // Check if username exists
-    const { data: existing } = await supabase
-      .from('users')
-      .select('user_id')
-      .eq('username', username)
-      .single();
-    
-    if(existing){
-      errorEl.textContent = '❌ Username already exists. Please choose another.';
-      errorEl.classList.remove('hidden');
-      registerBtn.disabled = false;
-      registerBtn.textContent = 'Register';
-      return;
-    }
-    
-    // Hash the password
-    const passwordHash = await hashPassword(password);
-    
-    // Create new user
-    const { data: newUser, error: insertError } = await supabase
-      .from('users')
-      .insert([{
-        username: username,
-        password: passwordHash,
-        lives: STARTING_LIVES,
-        coins: STARTING_COINS,
-        gems: STARTING_GEMS,
-        current_wave: 1,
-        max_wave: 1
-      }])
-      .select()
-      .single();
-    
-    if(insertError){
-      console.error('Insert error:', insertError);
-      errorEl.textContent = `❌ Registration failed: ${insertError.message || 'Please try again'}`;
-      errorEl.classList.remove('hidden');
-      registerBtn.disabled = false;
-      registerBtn.textContent = 'Register';
-      return;
-    }
-    
-    currentUser = newUser;
-    isGuest = false;
-  await persistenceLoadUserData(currentUser, UI.showErrorToast, UI.showInfoToast, UI.updateShopAndInventory);
-    
-    document.getElementById('authModal').classList.add('hidden');
-    document.getElementById('authUsername').value = '';
-    document.getElementById('authPassword').value = '';
-    log(`✅ Welcome, ${username}! Account created successfully.`);
-    
-    registerBtn.disabled = false;
-    registerBtn.textContent = 'Register';
-  } catch(err){
-    console.error('Registration error:', err);
-    errorEl.textContent = `❌ Registration failed: ${err.message || 'Please try again'}`;
-    errorEl.classList.remove('hidden');
-    registerBtn.disabled = false;
-    registerBtn.textContent = 'Register';
-  }
+  console.warn('Auth.handleRegister not available');
 }
 
 function handleGuest(){
+  if(Auth && typeof Auth.handleGuest === 'function') return Auth.handleGuest();
   isGuest = true;
   currentUser = null;
   document.getElementById('authModal').classList.add('hidden');
@@ -1376,10 +1207,11 @@ function handleGuest(){
 }
 
 async function handleLogout(){
+  if(Auth && typeof Auth.handleLogout === 'function') return Auth.handleLogout();
   if(!isGuest && currentUser){
-  await persistenceSaveUserData(currentUser, showErrorToast);
+    await persistenceSaveUserData(currentUser, showErrorToast);
   }
-  
+
   currentUser = null;
   isGuest = false;
   
@@ -1409,7 +1241,7 @@ async function handleLogout(){
     totalCoinsEarned: 0,
     totalGemsEarned: 0
   };
-  
+
   initCells();
   initStarterPets();
   updateUI();
@@ -1471,10 +1303,10 @@ const loginBtn = document.getElementById('loginBtn');
 const registerBtn = document.getElementById('registerBtn');
 const guestBtn = document.getElementById('guestBtn');
 const logoutBtn = document.getElementById('logoutBtn');
-if(loginBtn) loginBtn.addEventListener('click', () => handleLogin());
-if(registerBtn) registerBtn.addEventListener('click', () => handleRegister());
-if(guestBtn) guestBtn.addEventListener('click', () => handleGuest());
-if(logoutBtn) logoutBtn.addEventListener('click', () => handleLogout());
+if(loginBtn) loginBtn.addEventListener('click', () => Auth.handleLogin && Auth.handleLogin());
+if(registerBtn) registerBtn.addEventListener('click', () => Auth.handleRegister && Auth.handleRegister());
+if(guestBtn) guestBtn.addEventListener('click', () => Auth.handleGuest && Auth.handleGuest());
+if(logoutBtn) logoutBtn.addEventListener('click', () => Auth.handleLogout && Auth.handleLogout());
 
 // Auth input handlers - press Enter to login
 const authUsername = document.getElementById('authUsername');
