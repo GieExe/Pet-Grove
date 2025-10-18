@@ -151,9 +151,185 @@ section{
   background:linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
 }
 
-.gacha-button:hover, .stats-button:hover{
+.enchant-button{
+  background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width:100%;
+  color:white;
+  border:none;
+  padding:12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+  font-size:0.95rem;
+  transition:all 0.2s;
+  margin-top:8px;
+}
+
+.gacha-button:hover, .stats-button:hover, .enchant-button:hover{
   transform:translateY(-2px);
   box-shadow:0 4px 12px rgba(102,126,234,0.4);
+}
+
+/* Auth Modal Styles */
+.form-group{
+  margin-bottom:16px;
+}
+
+.form-group label{
+  display:block;
+  margin-bottom:6px;
+  font-weight:600;
+  color:#fff;
+}
+
+.form-group input{
+  width:100%;
+  padding:10px;
+  border-radius:6px;
+  border:1px solid rgba(255,255,255,0.2);
+  background:rgba(255,255,255,0.05);
+  color:#fff;
+  font-size:1rem;
+}
+
+.form-group input:focus{
+  outline:none;
+  border-color:var(--primary);
+  background:rgba(255,255,255,0.1);
+}
+
+.auth-buttons{
+  display:flex;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.auth-btn{
+  flex:1;
+  background:var(--primary);
+  color:white;
+  border:none;
+  padding:12px;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+  transition:all 0.2s;
+}
+
+.auth-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(233,69,96,0.4);
+}
+
+.guest-btn{
+  width:100%;
+  background:rgba(255,255,255,0.1);
+  color:white;
+  border:1px solid rgba(255,255,255,0.2);
+  padding:10px;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+  transition:all 0.2s;
+}
+
+.guest-btn:hover{
+  background:rgba(255,255,255,0.15);
+  border-color:rgba(255,255,255,0.3);
+}
+
+.error-message{
+  background:rgba(231,76,60,0.2);
+  border:1px solid #e74c3c;
+  color:#ff6b6b;
+  padding:10px;
+  border-radius:6px;
+  margin-bottom:12px;
+  font-size:0.9rem;
+}
+
+.logout-btn{
+  background:rgba(231,76,60,0.8);
+  color:white;
+  border:none;
+  padding:6px 12px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:0.85rem;
+  font-weight:600;
+  transition:all 0.2s;
+}
+
+.logout-btn:hover{
+  background:rgba(231,76,60,1);
+  transform:translateY(-1px);
+}
+
+.enchant-list{
+  max-height:300px;
+  overflow-y:auto;
+  margin:16px 0;
+}
+
+.enchant-item{
+  background:rgba(255,255,255,0.05);
+  border:2px solid rgba(255,255,255,0.1);
+  border-radius:8px;
+  padding:12px;
+  margin-bottom:8px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.enchant-emoji{
+  font-size:32px;
+}
+
+.enchant-info{
+  flex:1;
+}
+
+.enchant-cost{
+  color:#f39c12;
+  font-weight:600;
+  margin-top:4px;
+}
+
+.enchant-level{
+  background:rgba(102,126,234,0.3);
+  border:1px solid rgba(102,126,234,0.6);
+  color:#fff;
+  padding:2px 8px;
+  border-radius:4px;
+  font-size:0.75rem;
+  font-weight:600;
+  margin-left:8px;
+}
+
+.variant-badge{
+  position:absolute;
+  top:-4px;
+  left:-4px;
+  background:linear-gradient(135deg, #ffd700, #ffed4e);
+  color:#000;
+  font-size:10px;
+  padding:2px 6px;
+  border-radius:4px;
+  font-weight:700;
+  z-index:4;
+  box-shadow:0 0 8px rgba(255,215,0,0.8);
+}
+
+.variant-badge.rainbow{
+  background:linear-gradient(135deg, #ff0080, #ff8c00, #40e0d0, #ff0080);
+  color:#fff;
+  animation:rainbow-glow 2s infinite;
+}
+
+@keyframes rainbow-glow{
+  0%, 100%{box-shadow:0 0 12px rgba(255,0,128,0.8)}
+  50%{box-shadow:0 0 20px rgba(64,224,208,1)}
 }
 
 /* Battle Grid Styles */
@@ -419,14 +595,24 @@ section{
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  transition:all 0.1s linear;
+  transition:left 0.08s linear, top 0.08s linear;
   z-index:10;
   pointer-events:none;
+  will-change:left, top;
 }
 
 .enemy-emoji{
   font-size:28px;
   filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  animation:enemy-walk 0.6s ease-in-out infinite;
+}
+
+/* Smooth walking animation for enemies */
+@keyframes enemy-walk{
+  0%, 100%{transform:translateY(0px) rotate(-3deg)}
+  25%{transform:translateY(-2px) rotate(0deg)}
+  50%{transform:translateY(0px) rotate(3deg)}
+  75%{transform:translateY(-2px) rotate(0deg)}
 }
 
 .status-effects{
@@ -463,11 +649,12 @@ section{
   display:flex;
   align-items:center;
   justify-content:center;
-  transition:all 0.03s linear;
+  transition:left 0.03s linear, top 0.03s linear;
   z-index:5;
   pointer-events:none;
   filter:drop-shadow(0 0 8px rgba(255,215,0,1)) drop-shadow(0 0 16px rgba(255,165,0,0.8)) drop-shadow(0 0 20px rgba(255,100,0,0.4));
   animation:projectile-glow 0.4s ease-in-out infinite alternate, projectile-spin 0.8s linear infinite;
+  will-change:left, top;
 }
 
 /* Improved projectile glow with stronger effects */

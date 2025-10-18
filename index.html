@@ -7,12 +7,37 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- Auth Modal -->
+  <div id="authModal" class="modal">
+    <div class="modal-content">
+      <h2 id="authTitle">🐾 Welcome to Pet Defense</h2>
+      <div id="authForm">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="authUsername" placeholder="Enter username" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="authPassword" placeholder="Enter password" autocomplete="current-password">
+        </div>
+        <div id="authError" class="error-message hidden"></div>
+        <div class="auth-buttons">
+          <button id="loginBtn" class="auth-btn">Login</button>
+          <button id="registerBtn" class="auth-btn">Register</button>
+        </div>
+        <button id="guestBtn" class="guest-btn">Continue as Guest</button>
+      </div>
+    </div>
+  </div>
+
   <header>
     <h1>🐾 Pet Defense Tower 🛡️</h1>
     <div id="resources">
+      <span id="userDisplay" style="margin-right:16px;display:none;">👤 <strong id="currentUser"></strong></span>
       <span>Coins: <strong id="coinCount">0</strong> 💰</span>
       <span>Gems: <strong id="gemCount">0</strong> 💎</span>
       <span>Lives: <strong id="livesCount">20</strong> ❤️</span>
+      <button id="logoutBtn" class="logout-btn" style="display:none;">Logout</button>
     </div>
   </header>
 
@@ -24,11 +49,16 @@
       </div>
       <button id="gachaBtn" class="gacha-button">🎲 Pet Gacha (40 gems)</button>
       <button id="statsBtn" class="stats-button">📊 Statistics</button>
+      <button id="enchantBtn" class="enchant-button">✨ Pet Enchant</button>
       <div style="margin-top:12px;padding:8px;background:rgba(255,255,255,0.03);border-radius:6px;font-size:0.75rem;color:#aaa">
         <div style="margin-bottom:4px;font-weight:600;color:#fff">Drop Rates:</div>
         <div>Common: 62% | Rare: 23%</div>
         <div>Epic: 11% | Legendary: 3.5%</div>
         <div style="color:#ff1493">✨ Mythic: 0.5%</div>
+        <div style="margin-top:6px;border-top:1px dashed rgba(255,255,255,0.2);padding-top:6px">
+          <div style="color:#ffd700">🌟 Gold Variant: +50%</div>
+          <div style="color:#ff00ff">🌈 Rainbow Variant: +100%</div>
+        </div>
       </div>
     </section>
 
@@ -40,6 +70,9 @@
             <option value="classic">Classic</option>
             <option value="zigzag">Zigzag</option>
             <option value="spiral">Spiral</option>
+            <option value="maze">Maze</option>
+            <option value="cross">Cross</option>
+            <option value="snake">Snake</option>
           </select>
           <button id="startWaveBtn" class="wave-button">▶️ Start Wave</button>
           <button id="pauseBtn" class="wave-button" style="background:#f39c12;display:none">⏸️ Pause</button>
@@ -100,6 +133,18 @@
     </div>
   </div>
 
+  <!-- Enchant Modal -->
+  <div id="enchantModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>✨ Pet Enchant</h2>
+      <p style="color:#aaa;font-size:0.9rem;margin-bottom:12px;">Enchant your pets to give them permanent stat bonuses!</p>
+      <div id="enchantContent">
+        <p style="text-align:center;color:#888;">Select a pet from your inventory to enchant</p>
+      </div>
+      <button id="closeEnchantBtn">Close</button>
+    </div>
+  </div>
+
   <footer>
     <small>Pet Defense — Deploy pets to defend against waves of enemies! Progress saves automatically.</small>
     <small style="display:block;margin-top:8px;color:#888;">
@@ -107,6 +152,6 @@
     </small>
   </footer>
 
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>

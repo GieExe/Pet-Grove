@@ -1,5 +1,15 @@
 // Pet Defense — Tower Defense game with pets and gacha system
 
+/* --- Supabase Integration --- */
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_URL = 'https://hkdxpmcwolfmldkhsukt.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhrZHhwbWN3b2xmbWxka2hzdWt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA3NTcwOTAsImV4cCI6MjA3NjMzMzA5MH0.bRy_4zYoPXQIhiDw-Mes6mcPd5h0cGLnq2X0gll5eb8';
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+let isGuest = false;
+
 /* --- Configuration --- */
 const TICK_INTERVAL = 100; // ms - faster for TD gameplay
 const GRID_ROWS = 7; // Expanded from 5 to 7 for more placement space
@@ -141,7 +151,22 @@ const ENEMY_TYPES = [
   { id: 'witch', emoji: '🧙', name: 'Witch', hp: 140, speed: 1.1, reward: 48, gems: 3 },
   { id: 'troll', emoji: '🧌', name: 'Troll', hp: 250, speed: 0.6, reward: 70, gems: 6 },
   { id: 'dragon', emoji: '🐲', name: 'Mini Dragon', hp: 300, speed: 1.2, reward: 80, gems: 7 },
-  { id: 'golem', emoji: '🗿', name: 'Stone Golem', hp: 350, speed: 0.5, reward: 90, gems: 8 }
+  { id: 'golem', emoji: '🗿', name: 'Stone Golem', hp: 350, speed: 0.5, reward: 90, gems: 8 },
+  // NEW ENEMIES - More variety
+  { id: 'pixie', emoji: '🧚', name: 'Dark Pixie', hp: 55, speed: 1.8, reward: 25, gems: 2 },
+  { id: 'genie', emoji: '🧞', name: 'Evil Genie', hp: 160, speed: 1.3, reward: 52, gems: 4 },
+  { id: 'ogre', emoji: '👹', name: 'Ogre Brute', hp: 220, speed: 0.7, reward: 65, gems: 5 },
+  { id: 'banshee', emoji: '👻', name: 'Banshee', hp: 130, speed: 1.4, reward: 42, gems: 3 },
+  { id: 'cyclops', emoji: '👁️', name: 'Cyclops', hp: 280, speed: 0.8, reward: 75, gems: 6 },
+  { id: 'chimera', emoji: '🐉', name: 'Chimera', hp: 320, speed: 1.1, reward: 85, gems: 7 },
+  { id: 'hydra', emoji: '🐍', name: 'Hydra', hp: 400, speed: 0.9, reward: 100, gems: 9 },
+  { id: 'phoenix', emoji: '🔥', name: 'Dark Phoenix', hp: 270, speed: 1.5, reward: 78, gems: 6 },
+  { id: 'basilisk', emoji: '🦎', name: 'Basilisk', hp: 190, speed: 1.2, reward: 58, gems: 5 },
+  { id: 'gargoyle', emoji: '🦇', name: 'Gargoyle', hp: 175, speed: 1.3, reward: 54, gems: 4 },
+  { id: 'minotaur', emoji: '🐂', name: 'Minotaur', hp: 260, speed: 0.9, reward: 72, gems: 6 },
+  { id: 'kraken', emoji: '🦑', name: 'Kraken', hp: 380, speed: 0.7, reward: 95, gems: 8 },
+  { id: 'necromancer', emoji: '🧙‍♂️', name: 'Necromancer', hp: 200, speed: 1.0, reward: 62, gems: 5 },
+  { id: 'lich', emoji: '💀', name: 'Lich King', hp: 450, speed: 0.8, reward: 110, gems: 10 }
 ];
 
 // Gacha rarities and rates - Adjusted with new MYTHIC tier
@@ -244,6 +269,66 @@ const MAPS = {
     { row: 5, col: 7 },
     { row: 5, col: 8 },
     { row: 5, col: 9 }
+  ],
+  maze: [
+    { row: 0, col: 0 },
+    { row: 0, col: 1 },
+    { row: 0, col: 2 },
+    { row: 1, col: 2 },
+    { row: 2, col: 2 },
+    { row: 2, col: 3 },
+    { row: 2, col: 4 },
+    { row: 2, col: 5 },
+    { row: 3, col: 5 },
+    { row: 4, col: 5 },
+    { row: 4, col: 6 },
+    { row: 4, col: 7 },
+    { row: 3, col: 7 },
+    { row: 2, col: 7 },
+    { row: 2, col: 8 },
+    { row: 2, col: 9 },
+    { row: 3, col: 9 },
+    { row: 4, col: 9 },
+    { row: 5, col: 9 },
+    { row: 6, col: 9 }
+  ],
+  cross: [
+    { row: 3, col: 0 },
+    { row: 3, col: 1 },
+    { row: 3, col: 2 },
+    { row: 3, col: 3 },
+    { row: 2, col: 3 },
+    { row: 1, col: 3 },
+    { row: 1, col: 4 },
+    { row: 1, col: 5 },
+    { row: 2, col: 5 },
+    { row: 3, col: 5 },
+    { row: 4, col: 5 },
+    { row: 5, col: 5 },
+    { row: 5, col: 6 },
+    { row: 5, col: 7 },
+    { row: 5, col: 8 },
+    { row: 5, col: 9 }
+  ],
+  snake: [
+    { row: 1, col: 0 },
+    { row: 1, col: 1 },
+    { row: 1, col: 2 },
+    { row: 1, col: 3 },
+    { row: 2, col: 3 },
+    { row: 3, col: 3 },
+    { row: 3, col: 4 },
+    { row: 3, col: 5 },
+    { row: 3, col: 6 },
+    { row: 2, col: 6 },
+    { row: 1, col: 6 },
+    { row: 1, col: 7 },
+    { row: 1, col: 8 },
+    { row: 1, col: 9 },
+    { row: 2, col: 9 },
+    { row: 3, col: 9 },
+    { row: 4, col: 9 },
+    { row: 5, col: 9 }
   ]
 };
 
@@ -278,12 +363,20 @@ function initStarterPets(){
     // Add kg to starter pets
     pet1.kg = generatePetKg('common');
     pet1.kgBonus = getKgBonus(pet1.kg, 'common');
+    pet1.variant = null;
+    pet1.variantBonus = 1.0;
+    pet1.enchantLevel = 0;
+    pet1.enchantBonus = 0;
     pet1.damage = Math.floor(pet1.damage * pet1.kgBonus);
     pet1.range = pet1.range * pet1.kgBonus;
     pet1.attackSpeed = pet1.attackSpeed / Math.sqrt(pet1.kgBonus);
     
     pet2.kg = generatePetKg('common');
     pet2.kgBonus = getKgBonus(pet2.kg, 'common');
+    pet2.variant = null;
+    pet2.variantBonus = 1.0;
+    pet2.enchantLevel = 0;
+    pet2.enchantBonus = 0;
     pet2.damage = Math.floor(pet2.damage * pet2.kgBonus);
     pet2.range = pet2.range * pet2.kgBonus;
     pet2.attackSpeed = pet2.attackSpeed / Math.sqrt(pet2.kgBonus);
@@ -318,6 +411,11 @@ function save(){
   const autoSellCheckbox = document.getElementById('autoSellCommon');
   if(autoSellCheckbox){
     localStorage.setItem('petdefense_autoSell', autoSellCheckbox.checked);
+  }
+  
+  // Save to Supabase if logged in
+  if(currentUser && !isGuest){
+    saveUserData().catch(err => console.error('Supabase save error:', err));
   }
   
   // Show save indicator briefly
@@ -409,14 +507,31 @@ function rollGacha(){
   const kg = generatePetKg(rarity);
   const kgBonus = getKgBonus(kg, rarity);
   
+  // Variant system - 5% chance for gold, 1% chance for rainbow
+  let variant = null;
+  let variantBonus = 1.0;
+  const variantRoll = Math.random();
+  
+  if(variantRoll < 0.01){ // 1% chance for rainbow
+    variant = 'rainbow';
+    variantBonus = 2.0; // +100% bonus
+  } else if(variantRoll < 0.06){ // 5% chance for gold (1% + 5% = 6% total)
+    variant = 'gold';
+    variantBonus = 1.5; // +50% bonus
+  }
+  
   return {
     ...pet,
     uniqueId: Date.now() + '_' + Math.random(),
     kg: kg,
     kgBonus: kgBonus,
-    damage: Math.floor(pet.damage * kgBonus),
-    range: pet.range * kgBonus,
-    attackSpeed: pet.attackSpeed / Math.sqrt(kgBonus) // Better pets attack slightly faster
+    variant: variant,
+    variantBonus: variantBonus,
+    enchantLevel: 0, // NEW: Enchant level starts at 0
+    enchantBonus: 0, // NEW: Enchant bonus starts at 0
+    damage: Math.floor(pet.damage * kgBonus * variantBonus),
+    range: pet.range * kgBonus * variantBonus,
+    attackSpeed: pet.attackSpeed / Math.sqrt(kgBonus * variantBonus) // Better pets attack slightly faster
   };
 }
 
@@ -460,13 +575,16 @@ function openGacha(){
   
   // Show result
   const kgQuality = newPet.kgBonus > 1.2 ? '⭐ HEAVY!' : newPet.kgBonus < 0.9 ? '⚠️ Light' : '✓ Normal';
+  const variantDisplay = newPet.variant === 'rainbow' ? '<div class="variant-badge rainbow">🌈 RAINBOW +100%</div>' : 
+                         newPet.variant === 'gold' ? '<div class="variant-badge">🌟 GOLD +50%</div>' : '';
   const autoSoldMessage = autoSold ? `<div style="margin-top:12px;padding:8px;background:rgba(255,215,0,0.2);border:1px solid rgba(255,215,0,0.4);border-radius:6px;">
       <strong>✅ Auto-Sold!</strong><br>
       Duplicate common pet sold for <strong>${sellValue} coins</strong>
     </div>` : '';
   
   gachaResult.innerHTML = `
-    <div class="gacha-reveal ${newPet.rarity}">
+    <div class="gacha-reveal ${newPet.rarity}" style="position:relative">
+      ${variantDisplay}
       <div class="gacha-emoji">${newPet.emoji}</div>
       <h3>${newPet.name}</h3>
       <div class="rarity-badge ${newPet.rarity}">${newPet.rarity.toUpperCase()}</div>
@@ -476,7 +594,8 @@ function openGacha(){
         <div>📏 Range: ${newPet.range.toFixed(1)}</div>
         <div>⚡ Speed: ${newPet.attackSpeed.toFixed(2)}s</div>
         <div>⚖️ Weight: ${newPet.kg}kg ${kgQuality}</div>
-        <div style="font-size:0.85rem;color:#aaa;margin-top:4px">Stats: ${Math.round(newPet.kgBonus * 100)}%</div>
+        <div style="font-size:0.85rem;color:#aaa;margin-top:4px">Stats: ${Math.round(newPet.kgBonus * newPet.variantBonus * 100)}%</div>
+        ${newPet.variant ? `<div style="font-size:0.9rem;color:${newPet.variant === 'rainbow' ? '#ff00ff' : '#ffd700'};margin-top:4px;font-weight:600">✨ ${newPet.variant.toUpperCase()} VARIANT!</div>` : ''}
       </div>
       ${autoSoldMessage}
     </div>
@@ -801,7 +920,7 @@ function createProjectile(defender, enemy){
     targetX: enemyPos.x, // Store initial target position for smoother tracking
     targetY: enemyPos.y,
     damage: defender.damage,
-    speed: 2.8, // cells per second - REDUCED for slower, more visible projectiles
+    speed: 3.5, // cells per second - Optimized for smooth, visible projectiles
     defenderName: defender.name,
     ability: defender.ability || null, // Add ability support
     startTime: Date.now(), // Track projectile lifetime for effects
@@ -828,7 +947,7 @@ function createProjectile(defender, enemy){
         targetX: additionalEnemyPos.x,
         targetY: additionalEnemyPos.y,
         damage: Math.floor(defender.damage * 0.5), // Reduced damage for additional projectiles
-        speed: 2.8, // Match main projectile speed
+        speed: 3.5, // Match main projectile speed
         defenderName: defender.name,
         ability: null, // Additional projectiles don't trigger abilities
         startTime: Date.now(),
@@ -1009,7 +1128,15 @@ function updateBattleGrid() {
       const rarityColors = {common: '#95a5a6', rare: '#3498db', epic: '#9b59b6', legendary: '#f39c12', mythic: '#ff1493'};
       const rarityColor = rarityColors[cell.defender.rarity] || '#95a5a6';
       
+      // Variant badge
+      const variantBadge = cell.defender.variant === 'rainbow' ? '<div class="variant-badge rainbow">🌈</div>' : 
+                           cell.defender.variant === 'gold' ? '<div class="variant-badge">🌟</div>' : '';
+      
+      // Enchant info
+      const enchantInfo = cell.defender.enchantLevel > 0 ? `<div class="info-line">✨ +${cell.defender.enchantLevel}</div>` : '';
+      
       el.innerHTML = `
+        ${variantBadge}
         <div class="defender" style="font-size: ${32 * kgScale}px; filter: drop-shadow(0 0 4px ${rarityColor})">${cell.defender.emoji}</div>
         ${levelBadge}
         <div class="defender-info">
@@ -1018,6 +1145,7 @@ function updateBattleGrid() {
           <div class="info-line">📏 ${cell.defender.range.toFixed(1)}</div>
           <div class="info-line">⚡ ${cell.defender.attackSpeed.toFixed(2)}s</div>
           ${kgInfo}
+          ${enchantInfo}
           ${abilityIcon ? `<div class="info-line">${abilityIcon} ${getAbilityName(cell.defender.ability)}</div>` : ''}
         </div>
         <div class="defender-controls">
@@ -1050,8 +1178,11 @@ function renderEnemies() {
     if (enemy.spawnDelay > 0) return;
     const enemyEl = document.createElement('div');
     enemyEl.className = 'enemy';
-    enemyEl.style.left = `${enemy.position.col * (100 / GRID_COLS)}%`;
-    enemyEl.style.top = `${enemy.position.row * (100 / GRID_ROWS)}%`;
+    // Use percentage positioning with CSS transitions for smooth movement
+    const leftPercent = enemy.position.col * (100 / GRID_COLS);
+    const topPercent = enemy.position.row * (100 / GRID_ROWS);
+    enemyEl.style.left = `${leftPercent}%`;
+    enemyEl.style.top = `${topPercent}%`;
     
     // Add status effect indicators
     let statusEffects = '';
@@ -1070,12 +1201,14 @@ function renderEnemies() {
     enemiesContainer.appendChild(enemyEl);
   });
   
-  // Render projectiles
+  // Render projectiles with smooth CSS transitions
   state.projectiles.forEach(proj => {
     const projEl = document.createElement('div');
     projEl.className = 'projectile';
-    projEl.style.left = `${proj.x * (100 / GRID_COLS)}%`;
-    projEl.style.top = `${proj.y * (100 / GRID_ROWS)}%`;
+    const leftPercent = proj.x * (100 / GRID_COLS);
+    const topPercent = proj.y * (100 / GRID_ROWS);
+    projEl.style.left = `${leftPercent}%`;
+    projEl.style.top = `${topPercent}%`;
     
     // Use different projectile emojis based on ability or damage
     let projectileEmoji;
@@ -1161,14 +1294,22 @@ function renderInventory(){
     const abilityIcon = pet.ability ? getAbilityIcon(pet.ability) : '';
     const kgScale = pet.kg ? 1 + (pet.kgBonus - 1) * 0.5 : 1;
     const kgDisplay = pet.kg ? ` ⚖️${pet.kg}kg` : '';
+    const variantBadge = pet.variant === 'rainbow' ? '<div class="variant-badge rainbow">🌈</div>' : 
+                         pet.variant === 'gold' ? '<div class="variant-badge">🌟</div>' : '';
+    const enchantDisplay = pet.enchantLevel > 0 ? ` ✨+${pet.enchantLevel}` : '';
+    
     div.innerHTML = `
+      ${variantBadge}
       <div class="inv-emoji" style="font-size: ${32 * kgScale}px">${pet.emoji}</div>
-      <div class="inv-name">${pet.name}</div>
+      <div class="inv-name">${pet.name}${enchantDisplay}</div>
       <div class="inv-stats">💪${Math.floor(pet.damage)} 📏${pet.range.toFixed(1)}${abilityIcon ? ' ' + abilityIcon : ''}${kgDisplay}</div>
     `;
     const abilityText = pet.ability ? `\nAbility: ${getAbilityName(pet.ability)}` : '';
     const kgText = pet.kg ? `\nWeight: ${pet.kg}kg (${Math.round(pet.kgBonus * 100)}% stats)` : '';
-    div.title = `${pet.description}\nDamage: ${Math.floor(pet.damage)}, Range: ${pet.range.toFixed(1)}, Speed: ${pet.attackSpeed.toFixed(2)}s${kgText}${abilityText}\nClick to select for deployment`;
+    const variantText = pet.variant ? `\nVariant: ${pet.variant.toUpperCase()} (+${pet.variant === 'rainbow' ? '100' : '50'}%)` : '';
+    const enchantText = pet.enchantLevel > 0 ? `\nEnchant: +${pet.enchantLevel} (${Math.round(pet.enchantBonus * 100)}% bonus)` : '';
+    div.title = `${pet.description}\nDamage: ${Math.floor(pet.damage)}, Range: ${pet.range.toFixed(1)}, Speed: ${pet.attackSpeed.toFixed(2)}s${kgText}${variantText}${enchantText}${abilityText}\nClick to select for deployment`;
+    div.style.position = 'relative'; // For variant badge positioning
     // stable event listener; recreating inventory is OK on selection changes,
     // but we use addEventListener to avoid accidental overwrite if desired
     div.addEventListener('click', () => {
@@ -1301,19 +1442,10 @@ function moveDefender(cellIdx){
   state.defenders = state.defenders.filter(d => d !== defender);
   cell.defender = null;
   
-  // Return to inventory for redeployment
-  const basePet = PET_DEFENDERS.find(p => p.id === defender.id);
+  // Return to inventory for redeployment - preserve ALL properties
   const movingPet = {
-    ...basePet,
-    uniqueId: Date.now() + '_' + Math.random(),
-    // Preserve upgrade stats if upgraded
-    ...(defender.upgradeLevel > 0 ? {
-      damage: defender.damage,
-      range: defender.range,
-      attackSpeed: defender.attackSpeed,
-      upgradeLevel: defender.upgradeLevel,
-      totalCost: defender.totalCost
-    } : {})
+    ...defender,
+    uniqueId: Date.now() + '_' + Math.random()
   };
   
   state.ownedPets.push(movingPet);
@@ -1432,6 +1564,369 @@ function togglePause(){
   log(state.isPaused ? '⏸️ Game paused' : '▶️ Game resumed');
 }
 
+/* --- Pet Enchant System --- */
+function showEnchantModal(){
+  const enchantModal = document.getElementById('enchantModal');
+  const enchantContent = document.getElementById('enchantContent');
+  
+  if(state.ownedPets.length === 0){
+    enchantContent.innerHTML = '<p style="text-align:center;color:#888;">No pets in inventory to enchant!</p>';
+  } else {
+    let html = '<div class="enchant-list">';
+    state.ownedPets.forEach(pet => {
+      const enchantLevel = pet.enchantLevel || 0;
+      const enchantCost = Math.floor(100 * Math.pow(1.5, enchantLevel)); // Costs increase exponentially
+      const canAfford = state.gems >= enchantCost;
+      const variantBadge = pet.variant === 'rainbow' ? '🌈' : pet.variant === 'gold' ? '🌟' : '';
+      
+      html += `
+        <div class="enchant-item" style="${canAfford ? '' : 'opacity:0.5'}">
+          <div class="enchant-emoji">${pet.emoji}${variantBadge}</div>
+          <div class="enchant-info">
+            <div style="font-weight:600">${pet.name}${enchantLevel > 0 ? `<span class="enchant-level">✨+${enchantLevel}</span>` : ''}</div>
+            <div style="font-size:0.8rem;color:#aaa;">${pet.rarity} | 💪${Math.floor(pet.damage)} 📏${pet.range.toFixed(1)}</div>
+            <div class="enchant-cost">Cost: ${enchantCost} gems 💎</div>
+          </div>
+          <button onclick="enchantPet('${pet.uniqueId}')" 
+                  ${!canAfford ? 'disabled' : ''}
+                  style="padding:8px 16px;background:${canAfford ? 'linear-gradient(135deg, #667eea, #764ba2)' : '#555'};
+                         color:white;border:none;border-radius:6px;cursor:${canAfford ? 'pointer' : 'not-allowed'};
+                         font-weight:600;white-space:nowrap">
+            ✨ Enchant
+          </button>
+        </div>
+      `;
+    });
+    html += '</div>';
+    enchantContent.innerHTML = html;
+  }
+  
+  enchantModal.classList.remove('hidden');
+}
+
+function enchantPet(uniqueId){
+  const pet = state.ownedPets.find(p => p.uniqueId === uniqueId);
+  if(!pet) return;
+  
+  const enchantLevel = pet.enchantLevel || 0;
+  const enchantCost = Math.floor(100 * Math.pow(1.5, enchantLevel));
+  
+  if(state.gems < enchantCost){
+    log('⚠️ Not enough gems to enchant!');
+    return;
+  }
+  
+  // Apply enchantment
+  state.gems -= enchantCost;
+  pet.enchantLevel = enchantLevel + 1;
+  pet.enchantBonus = (pet.enchantBonus || 0) + 0.1; // +10% per level
+  
+  // Update pet stats
+  const basePet = PET_DEFENDERS.find(p => p.id === pet.id);
+  if(basePet){
+    const totalMultiplier = (pet.kgBonus || 1) * (pet.variantBonus || 1) * (1 + pet.enchantBonus);
+    pet.damage = Math.floor(basePet.damage * totalMultiplier);
+    pet.range = basePet.range * totalMultiplier;
+    pet.attackSpeed = basePet.attackSpeed / Math.sqrt(totalMultiplier);
+  }
+  
+  log(`✨ Enchanted ${pet.name} to level ${pet.enchantLevel}! (+10% stats)`);
+  save();
+  showEnchantModal(); // Refresh the modal
+  updateShopAndInventory();
+}
+
+/* --- Authentication Functions --- */
+async function showAuthModal(){
+  const authModal = document.getElementById('authModal');
+  authModal.classList.remove('hidden');
+}
+
+async function handleLogin(){
+  const username = document.getElementById('authUsername').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const errorEl = document.getElementById('authError');
+  
+  if(!username || !password){
+    errorEl.textContent = 'Please enter both username and password';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  try {
+    // Query for user
+    const { data: users, error: queryError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username)
+      .single();
+    
+    if(queryError || !users){
+      errorEl.textContent = 'Invalid username or password';
+      errorEl.classList.remove('hidden');
+      return;
+    }
+    
+    // Simple password check (in production, use proper hashing)
+    if(users.password !== password){
+      errorEl.textContent = 'Invalid username or password';
+      errorEl.classList.remove('hidden');
+      return;
+    }
+    
+    // Update last login
+    await supabase
+      .from('users')
+      .update({ last_login: new Date().toISOString() })
+      .eq('user_id', users.user_id);
+    
+    // Load user data
+    currentUser = users;
+    isGuest = false;
+    await loadUserData();
+    
+    document.getElementById('authModal').classList.add('hidden');
+    log(`✅ Welcome back, ${username}!`);
+  } catch(err){
+    console.error('Login error:', err);
+    errorEl.textContent = 'Login failed. Please try again.';
+    errorEl.classList.remove('hidden');
+  }
+}
+
+async function handleRegister(){
+  const username = document.getElementById('authUsername').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const errorEl = document.getElementById('authError');
+  
+  if(!username || !password){
+    errorEl.textContent = 'Please enter both username and password';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  if(username.length < 3){
+    errorEl.textContent = 'Username must be at least 3 characters';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  if(password.length < 6){
+    errorEl.textContent = 'Password must be at least 6 characters';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  try {
+    // Check if username exists
+    const { data: existing } = await supabase
+      .from('users')
+      .select('user_id')
+      .eq('username', username)
+      .single();
+    
+    if(existing){
+      errorEl.textContent = 'Username already exists';
+      errorEl.classList.remove('hidden');
+      return;
+    }
+    
+    // Create new user
+    const { data: newUser, error: insertError } = await supabase
+      .from('users')
+      .insert([{
+        username: username,
+        password: password, // In production, hash this!
+        lives: STARTING_LIVES,
+        coins: STARTING_COINS,
+        gems: STARTING_GEMS,
+        current_wave: 1,
+        max_wave: 1
+      }])
+      .select()
+      .single();
+    
+    if(insertError){
+      console.error('Insert error:', insertError);
+      errorEl.textContent = 'Registration failed. Please try again.';
+      errorEl.classList.remove('hidden');
+      return;
+    }
+    
+    currentUser = newUser;
+    isGuest = false;
+    await loadUserData();
+    
+    document.getElementById('authModal').classList.add('hidden');
+    log(`✅ Welcome, ${username}! Account created successfully.`);
+  } catch(err){
+    console.error('Registration error:', err);
+    errorEl.textContent = 'Registration failed. Please try again.';
+    errorEl.classList.remove('hidden');
+  }
+}
+
+function handleGuest(){
+  isGuest = true;
+  currentUser = null;
+  document.getElementById('authModal').classList.add('hidden');
+  log('✅ Continuing as guest');
+  updateUserDisplay();
+}
+
+async function handleLogout(){
+  if(!isGuest && currentUser){
+    await saveUserData();
+  }
+  
+  currentUser = null;
+  isGuest = false;
+  
+  // Reset game state
+  state = {
+    coins: STARTING_COINS,
+    gems: STARTING_GEMS,
+    lives: STARTING_LIVES,
+    wave: 1,
+    isWaveActive: false,
+    isPaused: false,
+    cells: [],
+    defenders: [],
+    enemies: [],
+    projectiles: [],
+    ownedPets: [],
+    selectedDefender: null,
+    enemyIdCounter: 0,
+    lastTick: Date.now(),
+    selectedMap: 'classic',
+    gameSpeed: 1,
+    stats: {
+      totalEnemiesDefeated: 0,
+      totalDamageDealt: 0,
+      wavesCompleted: 0,
+      gachaRolls: 0,
+      highestWave: 1,
+      totalCoinsEarned: 0,
+      totalGemsEarned: 0
+    }
+  };
+  
+  initCells();
+  initStarterPets();
+  updateUI();
+  updateShopAndInventory();
+  updateUserDisplay();
+  showAuthModal();
+  log('👋 Logged out');
+}
+
+async function loadUserData(){
+  if(!currentUser) return;
+  
+  // Load user stats from database
+  state.coins = currentUser.coins || STARTING_COINS;
+  state.gems = currentUser.gems || STARTING_GEMS;
+  state.lives = currentUser.lives || STARTING_LIVES;
+  state.wave = currentUser.current_wave || 1;
+  
+  // Load pets
+  const { data: pets, error } = await supabase
+    .from('pets')
+    .select('*')
+    .eq('user_id', currentUser.user_id);
+  
+  if(!error && pets){
+    state.ownedPets = pets.map(dbPet => {
+      const basePet = PET_DEFENDERS.find(p => p.id === dbPet.name.toLowerCase().replace(/\s+/g, ''));
+      if(!basePet) return null;
+      
+      return {
+        ...basePet,
+        uniqueId: dbPet.pet_id,
+        kg: dbPet.weight_kg || 10,
+        kgBonus: dbPet.power_bonus || 1,
+        variant: dbPet.variant || null,
+        variantBonus: dbPet.variant === 'rainbow' ? 2.0 : dbPet.variant === 'gold' ? 1.5 : 1.0,
+        enchantLevel: dbPet.enchant_level || 0,
+        enchantBonus: (dbPet.enchant_level || 0) * 0.1,
+        rarity: dbPet.rarity,
+        damage: Math.floor(basePet.damage * (dbPet.power_bonus || 1)),
+        range: basePet.range * (dbPet.power_bonus || 1),
+        attackSpeed: basePet.attackSpeed / Math.sqrt(dbPet.power_bonus || 1)
+      };
+    }).filter(p => p !== null);
+  }
+  
+  if(state.ownedPets.length === 0){
+    initStarterPets();
+  }
+  
+  updateUserDisplay();
+  save();
+}
+
+async function saveUserData(){
+  if(!currentUser || isGuest) return;
+  
+  try {
+    // Update user stats
+    await supabase
+      .from('users')
+      .update({
+        coins: Math.floor(state.coins),
+        gems: Math.floor(state.gems),
+        lives: state.lives,
+        current_wave: state.wave,
+        max_wave: Math.max(currentUser.max_wave || 1, state.wave)
+      })
+      .eq('user_id', currentUser.user_id);
+    
+    // Delete old pets and insert new ones
+    await supabase
+      .from('pets')
+      .delete()
+      .eq('user_id', currentUser.user_id);
+    
+    if(state.ownedPets.length > 0){
+      const petsToInsert = state.ownedPets.map(pet => ({
+        user_id: currentUser.user_id,
+        name: pet.name,
+        rarity: pet.rarity,
+        weight_kg: pet.kg || 10,
+        variant: pet.variant || null,
+        enchant_level: pet.enchantLevel || 0,
+        power_bonus: (pet.kgBonus || 1) * (pet.variantBonus || 1) * (1 + (pet.enchantBonus || 0)),
+        equipped: false
+      }));
+      
+      await supabase
+        .from('pets')
+        .insert(petsToInsert);
+    }
+  } catch(err){
+    console.error('Save error:', err);
+  }
+}
+
+function updateUserDisplay(){
+  const userDisplay = document.getElementById('userDisplay');
+  const currentUserEl = document.getElementById('currentUser');
+  const logoutBtn = document.getElementById('logoutBtn');
+  
+  if(currentUser && !isGuest){
+    userDisplay.style.display = 'inline';
+    currentUserEl.textContent = currentUser.username;
+    logoutBtn.style.display = 'inline-block';
+  } else if(isGuest){
+    userDisplay.style.display = 'inline';
+    currentUserEl.textContent = 'Guest';
+    logoutBtn.style.display = 'inline-block';
+  } else {
+    userDisplay.style.display = 'none';
+    logoutBtn.style.display = 'none';
+  }
+}
+
 /* --- Event Handlers --- */
 startWaveBtn.addEventListener('click', () => spawnWave());
 gachaBtn.addEventListener('click', () => openGacha());
@@ -1450,6 +1945,23 @@ const statsModal = document.getElementById('statsModal');
 const closeStatsBtn = document.getElementById('closeStatsBtn');
 if(statsBtn) statsBtn.addEventListener('click', () => showStats());
 if(closeStatsBtn) closeStatsBtn.addEventListener('click', () => statsModal.classList.add('hidden'));
+
+// Enchant button
+const enchantBtn = document.getElementById('enchantBtn');
+const enchantModal = document.getElementById('enchantModal');
+const closeEnchantBtn = document.getElementById('closeEnchantBtn');
+if(enchantBtn) enchantBtn.addEventListener('click', () => showEnchantModal());
+if(closeEnchantBtn) closeEnchantBtn.addEventListener('click', () => enchantModal.classList.add('hidden'));
+
+// Auth buttons
+const loginBtn = document.getElementById('loginBtn');
+const registerBtn = document.getElementById('registerBtn');
+const guestBtn = document.getElementById('guestBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+if(loginBtn) loginBtn.addEventListener('click', () => handleLogin());
+if(registerBtn) registerBtn.addEventListener('click', () => handleRegister());
+if(guestBtn) guestBtn.addEventListener('click', () => handleGuest());
+if(logoutBtn) logoutBtn.addEventListener('click', () => handleLogout());
 
 // Map selector
 const mapSelector = document.getElementById('mapSelector');
@@ -1523,6 +2035,7 @@ document.addEventListener('keydown', (e) => {
 window.upgradeDefender = upgradeDefender;
 window.sellDefender = sellDefender;
 window.moveDefender = moveDefender;
+window.enchantPet = enchantPet;
 
 /* --- Game Loop --- */
 let last = Date.now();
@@ -1612,6 +2125,9 @@ function init(){
   updateShopAndInventory();
   last = Date.now();
   gameLoop();
+  
+  // Show auth modal on startup
+  showAuthModal();
   log('🛡️ Welcome to Pet Defense! Deploy pets and defend against waves!');
 }
 
