@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@supabase/supabase-js": "^2.75.1",
     "phaser": "^3.80.1"
   },
   "devDependencies": {
