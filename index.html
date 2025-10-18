@@ -156,7 +156,10 @@
   <script>
     // Error handler for module loading issues
     window.addEventListener('error', (e) => {
-      if (e.message && e.message.includes('Failed to resolve module specifier')) {
+      // Check both e.message and e.error?.message for broader browser compatibility
+      const errorMessage = e.message || e.error?.message || '';
+      if (errorMessage.includes('Failed to resolve module specifier') || 
+          errorMessage.includes('Cannot resolve module')) {
         const authModal = document.getElementById('authModal');
         const authForm = document.getElementById('authForm');
         if (authModal && authForm) {
@@ -180,9 +183,8 @@
             </div>
           `;
         }
-        return true;
       }
-    }, true);
+    });
   </script>
 </body>
 </html>
