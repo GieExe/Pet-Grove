@@ -1178,7 +1178,7 @@ function renderEnemies() {
     if (enemy.spawnDelay > 0) return;
     const enemyEl = document.createElement('div');
     enemyEl.className = 'enemy';
-    // Use transform for smoother animation instead of left/top
+    // Use percentage positioning with CSS transitions for smooth movement
     const leftPercent = enemy.position.col * (100 / GRID_COLS);
     const topPercent = enemy.position.row * (100 / GRID_ROWS);
     enemyEl.style.left = `${leftPercent}%`;
@@ -1201,7 +1201,7 @@ function renderEnemies() {
     enemiesContainer.appendChild(enemyEl);
   });
   
-  // Render projectiles with smooth transforms
+  // Render projectiles with smooth CSS transitions
   state.projectiles.forEach(proj => {
     const projEl = document.createElement('div');
     projEl.className = 'projectile';
