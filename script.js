@@ -920,7 +920,7 @@ function createProjectile(defender, enemy){
     targetX: enemyPos.x, // Store initial target position for smoother tracking
     targetY: enemyPos.y,
     damage: defender.damage,
-    speed: 2.8, // cells per second - REDUCED for slower, more visible projectiles
+    speed: 3.5, // cells per second - Optimized for smooth, visible projectiles
     defenderName: defender.name,
     ability: defender.ability || null, // Add ability support
     startTime: Date.now(), // Track projectile lifetime for effects
@@ -947,7 +947,7 @@ function createProjectile(defender, enemy){
         targetX: additionalEnemyPos.x,
         targetY: additionalEnemyPos.y,
         damage: Math.floor(defender.damage * 0.5), // Reduced damage for additional projectiles
-        speed: 2.8, // Match main projectile speed
+        speed: 3.5, // Match main projectile speed
         defenderName: defender.name,
         ability: null, // Additional projectiles don't trigger abilities
         startTime: Date.now(),
@@ -1178,8 +1178,11 @@ function renderEnemies() {
     if (enemy.spawnDelay > 0) return;
     const enemyEl = document.createElement('div');
     enemyEl.className = 'enemy';
-    enemyEl.style.left = `${enemy.position.col * (100 / GRID_COLS)}%`;
-    enemyEl.style.top = `${enemy.position.row * (100 / GRID_ROWS)}%`;
+    // Use transform for smoother animation instead of left/top
+    const leftPercent = enemy.position.col * (100 / GRID_COLS);
+    const topPercent = enemy.position.row * (100 / GRID_ROWS);
+    enemyEl.style.left = `${leftPercent}%`;
+    enemyEl.style.top = `${topPercent}%`;
     
     // Add status effect indicators
     let statusEffects = '';
@@ -1198,12 +1201,14 @@ function renderEnemies() {
     enemiesContainer.appendChild(enemyEl);
   });
   
-  // Render projectiles
+  // Render projectiles with smooth transforms
   state.projectiles.forEach(proj => {
     const projEl = document.createElement('div');
     projEl.className = 'projectile';
-    projEl.style.left = `${proj.x * (100 / GRID_COLS)}%`;
-    projEl.style.top = `${proj.y * (100 / GRID_ROWS)}%`;
+    const leftPercent = proj.x * (100 / GRID_COLS);
+    const topPercent = proj.y * (100 / GRID_ROWS);
+    projEl.style.left = `${leftPercent}%`;
+    projEl.style.top = `${topPercent}%`;
     
     // Use different projectile emojis based on ability or damage
     let projectileEmoji;
