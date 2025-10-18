@@ -1637,23 +1637,46 @@ function enchantPet(uniqueId){
 }
 
 /* --- Authentication Functions --- */
+// Hash password using SHA-256
+async function hashPassword(password){
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hash));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
+}
+
 async function showAuthModal(){
   const authModal = document.getElementById('authModal');
   authModal.classList.remove('hidden');
+  // Clear previous errors and inputs
+  const errorEl = document.getElementById('authError');
+  errorEl.classList.add('hidden');
+  errorEl.textContent = '';
 }
 
 async function handleLogin(){
   const username = document.getElementById('authUsername').value.trim();
   const password = document.getElementById('authPassword').value;
   const errorEl = document.getElementById('authError');
+  const loginBtn = document.getElementById('loginBtn');
   
+  // Validation
   if(!username || !password){
-    errorEl.textContent = 'Please enter both username and password';
+    errorEl.textContent = '⚠️ Please enter both username and password';
     errorEl.classList.remove('hidden');
     return;
   }
   
+  // Disable button during login
+  loginBtn.disabled = true;
+  loginBtn.textContent = 'Logging in...';
+  
   try {
+    // Hash the password
+    const passwordHash = await hashPassword(password);
+    
     // Query for user
     const { data: users, error: queryError } = await supabase
       .from('users')
@@ -1662,15 +1685,19 @@ async function handleLogin(){
       .single();
     
     if(queryError || !users){
-      errorEl.textContent = 'Invalid username or password';
+      errorEl.textContent = '❌ Invalid username or password';
       errorEl.classList.remove('hidden');
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Login';
       return;
     }
     
-    // Simple password check (in production, use proper hashing)
-    if(users.password !== password){
-      errorEl.textContent = 'Invalid username or password';
+    // Check password hash
+    if(users.password !== passwordHash){
+      errorEl.textContent = '❌ Invalid username or password';
       errorEl.classList.remove('hidden');
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Login';
       return;
     }
     
@@ -1686,11 +1713,18 @@ async function handleLogin(){
     await loadUserData();
     
     document.getElementById('authModal').classList.add('hidden');
+    document.getElementById('authUsername').value = '';
+    document.getElementById('authPassword').value = '';
     log(`✅ Welcome back, ${username}!`);
+    
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'Login';
   } catch(err){
     console.error('Login error:', err);
-    errorEl.textContent = 'Login failed. Please try again.';
+    errorEl.textContent = `❌ Login failed: ${err.message || 'Please try again'}`;
     errorEl.classList.remove('hidden');
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'Login';
   }
 }
 
@@ -1698,24 +1732,37 @@ async function handleRegister(){
   const username = document.getElementById('authUsername').value.trim();
   const password = document.getElementById('authPassword').value;
   const errorEl = document.getElementById('authError');
+  const registerBtn = document.getElementById('registerBtn');
   
+  // Validation
   if(!username || !password){
-    errorEl.textContent = 'Please enter both username and password';
+    errorEl.textContent = '⚠️ Please enter both username and password';
     errorEl.classList.remove('hidden');
     return;
   }
   
   if(username.length < 3){
-    errorEl.textContent = 'Username must be at least 3 characters';
+    errorEl.textContent = '⚠️ Username must be at least 3 characters';
     errorEl.classList.remove('hidden');
     return;
   }
   
   if(password.length < 6){
-    errorEl.textContent = 'Password must be at least 6 characters';
+    errorEl.textContent = '⚠️ Password must be at least 6 characters';
     errorEl.classList.remove('hidden');
     return;
   }
+  
+  // Additional validation for username (alphanumeric and underscores only)
+  if(!/^[a-zA-Z0-9_]+$/.test(username)){
+    errorEl.textContent = '⚠️ Username can only contain letters, numbers, and underscores';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  // Disable button during registration
+  registerBtn.disabled = true;
+  registerBtn.textContent = 'Creating account...';
   
   try {
     // Check if username exists
@@ -1726,17 +1773,22 @@ async function handleRegister(){
       .single();
     
     if(existing){
-      errorEl.textContent = 'Username already exists';
+      errorEl.textContent = '❌ Username already exists. Please choose another.';
       errorEl.classList.remove('hidden');
+      registerBtn.disabled = false;
+      registerBtn.textContent = 'Register';
       return;
     }
+    
+    // Hash the password
+    const passwordHash = await hashPassword(password);
     
     // Create new user
     const { data: newUser, error: insertError } = await supabase
       .from('users')
       .insert([{
         username: username,
-        password: password, // In production, hash this!
+        password: passwordHash,
         lives: STARTING_LIVES,
         coins: STARTING_COINS,
         gems: STARTING_GEMS,
@@ -1748,8 +1800,10 @@ async function handleRegister(){
     
     if(insertError){
       console.error('Insert error:', insertError);
-      errorEl.textContent = 'Registration failed. Please try again.';
+      errorEl.textContent = `❌ Registration failed: ${insertError.message || 'Please try again'}`;
       errorEl.classList.remove('hidden');
+      registerBtn.disabled = false;
+      registerBtn.textContent = 'Register';
       return;
     }
     
@@ -1758,11 +1812,18 @@ async function handleRegister(){
     await loadUserData();
     
     document.getElementById('authModal').classList.add('hidden');
+    document.getElementById('authUsername').value = '';
+    document.getElementById('authPassword').value = '';
     log(`✅ Welcome, ${username}! Account created successfully.`);
+    
+    registerBtn.disabled = false;
+    registerBtn.textContent = 'Register';
   } catch(err){
     console.error('Registration error:', err);
-    errorEl.textContent = 'Registration failed. Please try again.';
+    errorEl.textContent = `❌ Registration failed: ${err.message || 'Please try again'}`;
     errorEl.classList.remove('hidden');
+    registerBtn.disabled = false;
+    registerBtn.textContent = 'Register';
   }
 }
 
@@ -1962,6 +2023,26 @@ if(loginBtn) loginBtn.addEventListener('click', () => handleLogin());
 if(registerBtn) registerBtn.addEventListener('click', () => handleRegister());
 if(guestBtn) guestBtn.addEventListener('click', () => handleGuest());
 if(logoutBtn) logoutBtn.addEventListener('click', () => handleLogout());
+
+// Auth input handlers - press Enter to login
+const authUsername = document.getElementById('authUsername');
+const authPassword = document.getElementById('authPassword');
+if(authUsername){
+  authUsername.addEventListener('keypress', (e) => {
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      authPassword.focus();
+    }
+  });
+}
+if(authPassword){
+  authPassword.addEventListener('keypress', (e) => {
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      handleLogin();
+    }
+  });
+}
 
 // Map selector
 const mapSelector = document.getElementById('mapSelector');
